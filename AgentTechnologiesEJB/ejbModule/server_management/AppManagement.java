@@ -7,6 +7,8 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.zeromq.ZMQ.Context;
+
 import beans.DataManagementLocal;
 import exceptions.AliasExistsException;
 import model.AgentCenter;
@@ -68,7 +70,6 @@ public class AppManagement implements AppManagementLocal{
 
 	@Override
 	public void sendRegisterRequest(String address, String alias) {
-		
 	}
 	
 }
