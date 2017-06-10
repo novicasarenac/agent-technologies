@@ -9,7 +9,7 @@ import exceptions.AliasExistsException;
 import model.AgentCenter;
 
 @Singleton
-public class DataManagement implements DataManagementLocal {
+public class AgentCentersManagement implements AgentCentersManagementLocal {
 
 	private Map<String, AgentCenter> agentCenters = new HashMap<>();
 	
@@ -18,6 +18,7 @@ public class DataManagement implements DataManagementLocal {
 		if(agentCenters.containsKey(agentCenter.getAlias()))
 			throw new AliasExistsException();
 		
+		System.out.println("Agent center: " + agentCenter.getAlias() + " registered.");
 		agentCenters.put(agentCenter.getAlias(), agentCenter);
 	}
 

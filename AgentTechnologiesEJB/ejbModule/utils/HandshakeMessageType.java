@@ -1,0 +1,6 @@
+package utils;
+
+public enum HandshakeMessageType {
+
+	POST_NODE, GET_AGENT_CLASSES, POST_AGENT_CLASSES, POST_ALL_NODES, POST_AGENTS_RUNNING
+}

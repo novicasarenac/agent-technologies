@@ -1,0 +1,2 @@
+ejbModule.agents, Pong
+ejbModule.agents, ContractNet
