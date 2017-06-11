@@ -12,6 +12,9 @@ import javax.jms.MessageListener;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.zeromq.ZMQ;
 
+import beans.AgentCentersManagementLocal;
+import exceptions.AliasExistsException;
+import model.AgentCenter;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
 import utils.HandshakeMessage;
@@ -26,16 +29,19 @@ public class MessageReceiveController implements MessageListener {
 	@EJB
 	AppManagementLocal appManagement;
 	
+	@EJB
+	AgentCentersManagementLocal agentCentersManagement;
+	
 	@Override
 	public void onMessage(Message arg0) {
 		if(!appManagement.isListenerStarted()) {
-			appManagement.setListenerStarted(true);
 			listen();
 		}
 	}
 
 	@Asynchronous
 	public void listen() {
+		appManagement.setListenerStarted(true);
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket responder = context.socket(ZMQ.REP);
@@ -54,19 +60,31 @@ public class MessageReceiveController implements MessageListener {
 				e.printStackTrace();
 			}
 			
-			//HandshakeMessage replyMessage = processMessage(message);
+			HandshakeMessage replyMessage = processMessage(message);
+			String jsonReply = "";
 			ObjectMapper responseMapper = new ObjectMapper();
-			String jsonReply = "odgovor";
-			/*try {
+			try {
 				jsonReply = responseMapper.writeValueAsString(replyMessage);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}*/
+			}
 			responder.send(jsonReply, 0);
 		}
 		
 		responder.close();
 		context.term();
+	}
+	
+	public HandshakeMessage processMessage(HandshakeMessage message) {
+		HandshakeMessage retVal = new HandshakeMessage();
+		try {
+			agentCentersManagement.register(message.getNewAgentCenter());
+			retVal.setStatus(true);
+		} catch (AliasExistsException e) {
+			retVal.setStatus(false);
+		}
+		
+		return retVal;
 	}
 
 }

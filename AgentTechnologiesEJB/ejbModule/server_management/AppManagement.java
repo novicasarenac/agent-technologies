@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -131,29 +133,29 @@ public class AppManagement implements AppManagementLocal{
 		requester.send(jsonObject, 0);
 		
 		String reply = requester.recvStr(0);
-		System.out.println("RESPONSE : " + reply);
-		/*HandshakeMessage response = null;
+		HandshakeMessage response = null;
 		try {
 			ObjectMapper responseMapper = new ObjectMapper();
 			response = responseMapper.readValue(reply, HandshakeMessage.class);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		requester.close();
 		context.term();
-		//return response.isStatus();
-		return true;
+		return response.isStatus();
 	}
 
 	public String getPortOffset() {
 		return portOffset;
 	}
 
+	@Lock(LockType.READ)
 	public boolean isListenerStarted() {
 		return listenerStarted;
 	}
 
+	@Lock(LockType.WRITE)
 	public void setListenerStarted(boolean listenerStarted) {
 		this.listenerStarted = listenerStarted;
 	}
