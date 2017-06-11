@@ -41,8 +41,17 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 
 	@Override
-	public void testiraj() {
-		// TODO Auto-generated method stub
-		
+	public boolean addAgentType(AgentType agentType) {
+		if(!allTypes.contains(agentType)) {
+			System.out.println("New agent type: " + agentType.getName());
+			allTypes.add(agentType);
+			return true;
+		} else return false;
 	}
+
+	@Override
+	public List<AgentType> getSupportedTypes() {
+		return supportedTypes;
+	}
+	
 }

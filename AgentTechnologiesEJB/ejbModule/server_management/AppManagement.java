@@ -79,7 +79,6 @@ public class AppManagement implements AppManagementLocal{
 			localAlias = address.getHostName() + portOffset;
 		
 		System.out.println("Local address: " + local + "\tLocal alias: " + localAlias);
-		agentsManagement.testiraj();
 		sendActivationMessage();
 		if(isMaster()) {
 			try {
@@ -107,10 +106,6 @@ public class AppManagement implements AppManagementLocal{
 				numberOfTries++;
 			} else numberOfTries = 0;
 		}
-		if(numberOfTries > 1) {
-			//rollback
-			System.out.println("It needs callback");
-		} else System.out.println("It doesnt need callback");
 	}
 	
 	public String getPortOffset() {

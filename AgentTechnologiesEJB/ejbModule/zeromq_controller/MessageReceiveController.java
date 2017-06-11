@@ -1,6 +1,7 @@
 package zeromq_controller;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.Asynchronous;
@@ -9,16 +10,18 @@ import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
+import beans.AgentsManagementLocal;
+import beans.HandshakeRequesterLocal;
 import exceptions.AliasExistsException;
-import jdk.nashorn.internal.scripts.JS;
 import model.AgentCenter;
+import model.AgentType;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
 import utils.HandshakeMessage;
+import utils.HandshakeMessageType;
 import utils.JSONConverter;
 
 @MessageDriven(activationConfig = {
@@ -33,6 +36,12 @@ public class MessageReceiveController implements MessageListener {
 	
 	@EJB
 	AgentCentersManagementLocal agentCentersManagement;
+	
+	@EJB
+	AgentsManagementLocal agentsManagement;
+	
+	@EJB
+	HandshakeRequesterLocal handshakeRequester;
 	
 	@Override
 	public void onMessage(Message arg0) {
@@ -59,6 +68,9 @@ public class MessageReceiveController implements MessageListener {
 			HandshakeMessage replyMessage = processMessage(message);
 			String jsonReply = JSONConverter.convertToJSON(replyMessage);
 			responder.send(jsonReply, 0);
+			if(replyMessage.isStatus() && message.getMesssageType() == HandshakeMessageType.POST_NODE && appManagement.isMaster()) {
+				List<AgentType> newAgentTypes = getNewAgentTypes(message.getNewAgentCenter());
+			}
 		}
 		
 		responder.close();
@@ -67,11 +79,49 @@ public class MessageReceiveController implements MessageListener {
 	
 	public HandshakeMessage processMessage(HandshakeMessage message) {
 		HandshakeMessage retVal = new HandshakeMessage();
-		try {
-			agentCentersManagement.register(message.getNewAgentCenter());
-			retVal.setStatus(true);
-		} catch (AliasExistsException e) {
-			retVal.setStatus(false);
+		switch(message.getMesssageType()) {
+			case POST_NODE: {
+				try {
+					agentCentersManagement.register(message.getNewAgentCenter());
+					retVal.setStatus(true);
+				} catch (AliasExistsException e) {
+					retVal.setStatus(false);
+				}
+			}
+			
+			case GET_AGENT_CLASSES: {
+				try {
+					retVal.setAgentTypes(agentsManagement.getSupportedTypes());
+					retVal.setStatus(true);
+				} catch(Exception e) {
+					retVal.setStatus(false);
+				}
+			}
+		}
+		
+		return retVal;
+	}
+	
+	public List<AgentType> getNewAgentTypes(AgentCenter newAgentCenter) {
+		int numberOfTries = 0;
+		List<AgentType> retVal = new ArrayList<>();
+		HandshakeMessage response;
+		response = handshakeRequester.sendGetAgentTypesRequest(newAgentCenter);
+		
+		if(!response.isStatus()) {
+			numberOfTries++;
+			response = handshakeRequester.sendGetAgentTypesRequest(newAgentCenter);
+			if(!response.isStatus()) {
+				numberOfTries++;
+			} else numberOfTries = 0;
+		}
+		if(numberOfTries > 1) {
+			System.out.println("It needs callback");
+		} else {
+			for(AgentType type : response.getAgentTypes()) {
+				if(agentsManagement.addAgentType(type))
+					retVal.add(type);
+			}
 		}
 		
 		return retVal;
