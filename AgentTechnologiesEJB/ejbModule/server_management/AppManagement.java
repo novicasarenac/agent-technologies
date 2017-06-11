@@ -24,6 +24,7 @@ import exceptions.AliasExistsException;
 import model.AgentCenter;
 import utils.HandshakeMessage;
 import utils.HandshakeMessageType;
+import utils.JSONConverter;
 
 @Singleton(name = "AppManagement")
 @Startup
@@ -123,23 +124,11 @@ public class AppManagement implements AppManagementLocal{
 		requester.connect(url);
 		
 		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.POST_NODE, new AgentCenter(alias, address), null, null, null, true);
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonObject = "";
-		try {
-			jsonObject = mapper.writeValueAsString(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
 		String reply = requester.recvStr(0);
-		HandshakeMessage response = null;
-		try {
-			ObjectMapper responseMapper = new ObjectMapper();
-			response = responseMapper.readValue(reply, HandshakeMessage.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
 		
 		requester.close();
 		context.term();

@@ -14,10 +14,12 @@ import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
 import exceptions.AliasExistsException;
+import jdk.nashorn.internal.scripts.JS;
 import model.AgentCenter;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
 import utils.HandshakeMessage;
+import utils.JSONConverter;
 
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
@@ -52,22 +54,10 @@ public class MessageReceiveController implements MessageListener {
 		
 		while(!Thread.currentThread().isInterrupted()) {
 			String request = responder.recvStr(0);
-			HandshakeMessage message = null;
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				message = mapper.readValue(request, HandshakeMessage.class);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			HandshakeMessage message = JSONConverter.convertFromJSON(request);
 			
 			HandshakeMessage replyMessage = processMessage(message);
-			String jsonReply = "";
-			ObjectMapper responseMapper = new ObjectMapper();
-			try {
-				jsonReply = responseMapper.writeValueAsString(replyMessage);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			String jsonReply = JSONConverter.convertToJSON(replyMessage);
 			responder.send(jsonReply, 0);
 		}
 		
