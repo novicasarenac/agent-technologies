@@ -34,7 +34,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 		AgentTypesReader reader = new AgentTypesReader();
 		supportedTypes = reader.readTypes(filename);
 		for(AgentType type : supportedTypes) {
-			System.out.println(type);
+			System.out.println("Supported type : " + type.getName());
 			if(!allTypes.contains(type))
 				allTypes.add(type);
 		}
@@ -42,7 +42,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 
 	@Override
 	public boolean addAgentType(AgentType agentType) {
-		if(!allTypes.contains(agentType)) {
+		if(allTypes.stream().filter(type -> type.getName().equals(agentType.getName())).count() == 0) {
 			System.out.println("New agent type: " + agentType.getName());
 			allTypes.add(agentType);
 			return true;

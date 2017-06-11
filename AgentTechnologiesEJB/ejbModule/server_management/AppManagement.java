@@ -108,8 +108,14 @@ public class AppManagement implements AppManagementLocal{
 		}
 	}
 	
+	@Override
 	public String getPortOffset() {
 		return portOffset;
+	}
+	
+	@Override
+	public String getLocalAlias() {
+		return localAlias;
 	}
 
 	@Lock(LockType.READ)

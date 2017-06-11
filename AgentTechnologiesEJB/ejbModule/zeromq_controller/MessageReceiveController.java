@@ -46,12 +46,17 @@ public class MessageReceiveController implements MessageListener {
 	@Override
 	public void onMessage(Message arg0) {
 		if(!appManagement.isListenerStarted()) {
-			listen();
+			try {
+				listen();
+			} catch (Exception e) {
+				System.out.println("Connection is already opened!");
+			}
+			
 		}
 	}
 
 	@Asynchronous
-	public void listen() {
+	public void listen() throws Exception {
 		appManagement.setListenerStarted(true);
 		ZMQ.Context context = ZMQ.context(1);
 		
@@ -70,6 +75,13 @@ public class MessageReceiveController implements MessageListener {
 			responder.send(jsonReply, 0);
 			if(replyMessage.isStatus() && message.getMesssageType() == HandshakeMessageType.POST_NODE && appManagement.isMaster()) {
 				List<AgentType> newAgentTypes = getNewAgentTypes(message.getNewAgentCenter());
+				if(newAgentTypes != null) {
+					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
+					if(next) {
+						
+					}
+					
+				}
 			}
 		}
 		
@@ -87,6 +99,7 @@ public class MessageReceiveController implements MessageListener {
 				} catch (AliasExistsException e) {
 					retVal.setStatus(false);
 				}
+				break;
 			}
 			
 			case GET_AGENT_CLASSES: {
@@ -96,6 +109,19 @@ public class MessageReceiveController implements MessageListener {
 				} catch(Exception e) {
 					retVal.setStatus(false);
 				}
+				break;
+			}
+			
+			case NOTIFY_ALL: {
+				try {
+					agentCentersManagement.register(message.getNewAgentCenter());
+					for(AgentType type : message.getAgentTypes()) 
+						agentsManagement.addAgentType(type);
+					retVal.setStatus(true);
+				} catch (Exception e) {
+					retVal.setStatus(false);
+				}
+				break;
 			}
 		}
 		
@@ -117,6 +143,7 @@ public class MessageReceiveController implements MessageListener {
 		}
 		if(numberOfTries > 1) {
 			System.out.println("It needs callback");
+			return null;
 		} else {
 			for(AgentType type : response.getAgentTypes()) {
 				if(agentsManagement.addAgentType(type))
@@ -125,6 +152,31 @@ public class MessageReceiveController implements MessageListener {
 		}
 		
 		return retVal;
+	}
+	
+	public boolean notifyAllNodes(AgentCenter newAgentCenter, List<AgentType> newAgentTypes) {
+		HandshakeMessage response;
+		int numberOfTries = 0;
+		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
+			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
+				System.out.println("NOTIFIKUJE SE: " + agentCenter.getAlias());
+				response = handshakeRequester.notifyNode(newAgentCenter, newAgentTypes, agentCenter);
+				
+				if(!response.isStatus()) {
+					numberOfTries++;
+					response = handshakeRequester.notifyNode(newAgentCenter, newAgentTypes, agentCenter);
+					if(!response.isStatus()) {
+						numberOfTries++;
+					} else numberOfTries = 0;
+				}
+				if(numberOfTries > 1) {
+					System.out.println("It needs callback");
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 }

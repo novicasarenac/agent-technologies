@@ -13,4 +13,5 @@ public interface HandshakeRequesterLocal {
 
 	public boolean sendRegisterRequest(String address, String alias);
 	public HandshakeMessage sendGetAgentTypesRequest(AgentCenter agentCenter);
+	public HandshakeMessage notifyNode(AgentCenter newAgentCenter, List<AgentType> agentTypes, AgentCenter nodeToNotify);
 }

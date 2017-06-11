@@ -8,6 +8,7 @@ public interface AppManagementLocal {
 	public void handshake(String address, String alias);
 	public boolean isMaster();
 	public String getPortOffset();
+	public String getLocalAlias();
 	public boolean isListenerStarted();
 	public void setListenerStarted(boolean started);
 	

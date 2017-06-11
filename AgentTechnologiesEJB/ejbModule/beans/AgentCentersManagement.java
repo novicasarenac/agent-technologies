@@ -22,6 +22,7 @@ public class AgentCentersManagement implements AgentCentersManagementLocal {
 		agentCenters.put(agentCenter.getAlias(), agentCenter);
 	}
 
+	@Override
 	public Map<String, AgentCenter> getAgentCenters() {
 		return agentCenters;
 	}
