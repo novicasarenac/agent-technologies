@@ -20,6 +20,7 @@ import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
+import beans.HandshakeRequesterLocal;
 import exceptions.AliasExistsException;
 import model.AgentCenter;
 import utils.HandshakeMessage;
@@ -41,6 +42,9 @@ public class AppManagement implements AppManagementLocal{
 	
 	@EJB
 	AgentsManagementLocal agentsManagement;
+	
+	@EJB
+	HandshakeRequesterLocal handshakeRequester;
 	
 	@Inject
 	JMSContext context;
@@ -88,11 +92,6 @@ public class AppManagement implements AppManagementLocal{
 		}
 	}
 	
-	@Override
-	public boolean isMaster() {
-		return master == null;
-	}
-	
 	public void sendActivationMessage() {
 		String message = "Activation";
 		JMSProducer producer = context.createProducer();
@@ -102,9 +101,9 @@ public class AppManagement implements AppManagementLocal{
 	@Override
 	public void handshake(String address, String alias) {
 		int numberOfTries = 0;
-		if(!sendRegisterRequest(address, alias)) {
+		if(!handshakeRequester.sendRegisterRequest(address, alias)) {
 			numberOfTries++;
-			if(!sendRegisterRequest(address, alias)) {
+			if(!handshakeRequester.sendRegisterRequest(address, alias)) {
 				numberOfTries++;
 			} else numberOfTries = 0;
 		}
@@ -114,27 +113,6 @@ public class AppManagement implements AppManagementLocal{
 		} else System.out.println("It doesnt need callback");
 	}
 	
-	@Override
-	public boolean sendRegisterRequest(String address, String alias) {
-		ZMQ.Context context = ZMQ.context(1);
-		
-		ZMQ.Socket requester = context.socket(ZMQ.REQ);
-		String url = "tcp://localhost:" + SystemPropertiesKeys.MASTER_TCP_PORT;
-		System.out.println("SENDING TO: " + url);
-		requester.connect(url);
-		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.POST_NODE, new AgentCenter(alias, address), null, null, null, true);
-		String jsonObject = JSONConverter.convertToJSON(message);
-		requester.send(jsonObject, 0);
-		
-		String reply = requester.recvStr(0);
-		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
-		
-		requester.close();
-		context.term();
-		return response.isStatus();
-	}
-
 	public String getPortOffset() {
 		return portOffset;
 	}
@@ -147,6 +125,11 @@ public class AppManagement implements AppManagementLocal{
 	@Lock(LockType.WRITE)
 	public void setListenerStarted(boolean listenerStarted) {
 		this.listenerStarted = listenerStarted;
+	}
+	
+	@Override
+	public boolean isMaster() {
+		return master == null;
 	}
 	
 }
