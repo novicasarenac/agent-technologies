@@ -1,11 +1,13 @@
 package beans;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
 import org.zeromq.ZMQ;
 
+import model.AID;
 import model.AgentCenter;
 import model.AgentType;
 import server_management.SystemPropertiesKeys;
@@ -72,6 +74,29 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		requester.connect(url);
 		
 		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_ALL, newAgentCenter, agentTypes, null, null, true);
+		String jsonObject = JSONConverter.convertToJSON(message);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		
+		requester.close();
+		context.term();
+		return response;
+	}
+	
+	@Override
+	public HandshakeMessage sendDataToNewNode(AgentCenter newNode, Map<String, AgentCenter> agentCenters, List<AgentType> agentTypes, Map<String, AID> runningAgents) {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (newNode.getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_NEW_NODE, null, agentTypes, agentCenters, runningAgents, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		

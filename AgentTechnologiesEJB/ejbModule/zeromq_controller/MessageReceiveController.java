@@ -78,7 +78,7 @@ public class MessageReceiveController implements MessageListener {
 				if(newAgentTypes != null) {
 					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
 					if(next) {
-						
+						sendDataToNewCenter(message.getNewAgentCenter());
 					}
 					
 				}
@@ -123,6 +123,24 @@ public class MessageReceiveController implements MessageListener {
 				}
 				break;
 			}
+			
+			case NOTIFY_NEW_NODE: {
+				try {
+					for(AgentCenter center : message.getAgentCenters().values()) {
+						agentCentersManagement.register(center);
+					}
+					for(AgentType type : message.getAgentTypes()) {
+						agentsManagement.addAgentType(type);
+					}
+					for(String runningAgentName : message.getRunningAgents().keySet()) {
+						agentsManagement.addRunningAgent(runningAgentName, message.getRunningAgents().get(runningAgentName));
+					}
+					retVal.setStatus(true);
+				} catch (Exception e) {
+					retVal.setStatus(false);
+				}
+				break;
+			}
 		}
 		
 		return retVal;
@@ -159,7 +177,6 @@ public class MessageReceiveController implements MessageListener {
 		int numberOfTries = 0;
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
-				System.out.println("NOTIFIKUJE SE: " + agentCenter.getAlias());
 				response = handshakeRequester.notifyNode(newAgentCenter, newAgentTypes, agentCenter);
 				
 				if(!response.isStatus()) {
@@ -174,6 +191,25 @@ public class MessageReceiveController implements MessageListener {
 					return false;
 				}
 			}
+		}
+		
+		return true;
+	}
+	
+	public boolean sendDataToNewCenter(AgentCenter newCenter) {
+		HandshakeMessage response;
+		int numberOfTries = 0;
+		response = handshakeRequester.sendDataToNewNode(newCenter, agentCentersManagement.getAgentCenters(), agentsManagement.getAllTypes(), agentsManagement.getRunningAgents());
+		if(!response.isStatus()) {
+			numberOfTries++;
+			response = handshakeRequester.sendDataToNewNode(newCenter, agentCentersManagement.getAgentCenters(), agentsManagement.getAllTypes(), agentsManagement.getRunningAgents());
+			if(!response.isStatus()) {
+				numberOfTries++;
+			} else numberOfTries = 0;
+		}
+		if(numberOfTries > 1) {
+			System.out.println("It needs callback");
+			return false;
 		}
 		
 		return true;

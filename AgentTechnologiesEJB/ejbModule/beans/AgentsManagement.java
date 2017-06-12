@@ -48,10 +48,29 @@ public class AgentsManagement implements AgentsManagementLocal {
 			return true;
 		} else return false;
 	}
+	
+	@Override
+	public boolean addRunningAgent(String name, AID id) {
+		if(!runningAgents.containsKey(name)) {
+			runningAgents.put(name, id);
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public List<AgentType> getSupportedTypes() {
 		return supportedTypes;
 	}
-	
+
+	@Override
+	public List<AgentType> getAllTypes() {
+		return allTypes;
+	}
+
+	@Override
+	public Map<String, AID> getRunningAgents() {
+		return runningAgents;
+	}
+
 }
