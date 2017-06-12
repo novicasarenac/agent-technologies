@@ -107,5 +107,28 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		context.term();
 		return response;
 	}
+	
+	@Override
+	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, List<AgentType> newAgentTypes, Map<String, AID> runningAgents) {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (nodeToClean.getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.ROLLBACK, newAgentCenter, newAgentTypes, null, runningAgents, true);
+		String jsonObject = JSONConverter.convertToJSON(message);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		
+		requester.close();
+		context.term();
+		return response.isStatus();
+	}
 
 }

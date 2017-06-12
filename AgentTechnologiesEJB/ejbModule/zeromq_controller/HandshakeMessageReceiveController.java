@@ -78,10 +78,13 @@ public class HandshakeMessageReceiveController implements MessageListener {
 					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
 					if(next) {
 						if(!sendDataToNewCenter(message.getNewAgentCenter())) {
-							//TODO rollback
+							rollback(message.getNewAgentCenter(), newAgentTypes);
 						}
+					} else {
+						rollback(message.getNewAgentCenter(), newAgentTypes);
 					}
-					
+				} else {
+					cleanMasterNode(message.getNewAgentCenter());
 				}
 			}
 		}
@@ -139,6 +142,19 @@ public class HandshakeMessageReceiveController implements MessageListener {
 					retVal.setStatus(true);
 				} catch (Exception e) {
 					retVal.setStatus(false);
+				}
+				break;
+			}
+			
+			case ROLLBACK: {
+				agentCentersManagement.removeCenter(message.getNewAgentCenter());
+				for(AgentType type : message.getAgentTypes()) {
+					agentsManagement.removeAgentType(type);
+				}
+				if(message.getRunningAgents() != null) {
+					for(String agentName : message.getRunningAgents().keySet()) {
+						agentsManagement.removeRunningAgent(agentName);
+					}
 				}
 				break;
 			}
@@ -214,6 +230,23 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		}
 		
 		return true;
+	}
+	
+	public void cleanMasterNode(AgentCenter newAgentCenter) {
+		agentCentersManagement.removeCenter(newAgentCenter);
+	}
+	
+	public void rollback(AgentCenter newAgentCenter, List<AgentType> newAgentTypes) {
+		agentCentersManagement.removeCenter(newAgentCenter);
+		for(AgentType agentType : newAgentTypes) {
+			agentsManagement.removeAgentType(agentType);
+		}
+		
+		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
+			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
+				handshakeRequester.cleanNode(agentCenter, newAgentCenter, newAgentTypes, null);
+			}
+		}
 	}
 
 }

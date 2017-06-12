@@ -11,6 +11,7 @@ import model.AgentCenter;
 public interface AgentCentersManagementLocal {
 
 	public void register(AgentCenter agentCenter) throws AliasExistsException;
+	public void removeCenter(AgentCenter agentCenter);
 	public Map<String, AgentCenter> getAgentCenters();
 	
 }

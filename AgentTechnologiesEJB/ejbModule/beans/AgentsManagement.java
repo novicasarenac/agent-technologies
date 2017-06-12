@@ -50,12 +50,35 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 	
 	@Override
+	public void removeAgentType(AgentType agentType) {
+		System.out.println("Agent type: " + agentType.getName() + " removed");
+		AgentType typeToRemove = getAgentTypeByName(agentType.getName());
+		allTypes.remove(typeToRemove);
+	}
+	
+	public AgentType getAgentTypeByName(String name) {
+		for(AgentType type : allTypes) {
+			if(type.getName().equals(name))
+				return type;
+		}
+		return null;
+	}
+	
+	@Override
 	public boolean addRunningAgent(String name, AID id) {
 		if(!runningAgents.containsKey(name)) {
 			runningAgents.put(name, id);
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean removeRunningAgent(String name) {
+		if(runningAgents.containsKey(name)) {
+			runningAgents.remove(name);
+			return true;
+		} else return false;
 	}
 
 	@Override

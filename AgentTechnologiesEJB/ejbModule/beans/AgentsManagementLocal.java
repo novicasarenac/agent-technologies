@@ -13,9 +13,11 @@ public interface AgentsManagementLocal {
 
 	public void init();
 	public boolean addAgentType(AgentType agentType);
+	public void removeAgentType(AgentType agentType);
 	public List<AgentType> getSupportedTypes();
 	public List<AgentType> getAllTypes();
 	public Map<String, AID> getRunningAgents();
+	public boolean removeRunningAgent(String name);
 	public boolean addRunningAgent(String name, AID id);
 	
 }

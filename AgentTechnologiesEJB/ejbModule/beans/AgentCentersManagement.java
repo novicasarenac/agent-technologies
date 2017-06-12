@@ -21,10 +21,18 @@ public class AgentCentersManagement implements AgentCentersManagementLocal {
 		System.out.println("Agent center: " + agentCenter.getAlias() + " registered.");
 		agentCenters.put(agentCenter.getAlias(), agentCenter);
 	}
+	
+	@Override
+	public void removeCenter(AgentCenter agentCenter) {
+		if(agentCenters.containsKey(agentCenter.getAlias())) {
+			System.out.println("Agent center: " + agentCenter.getAlias() + " removed.");
+			agentCenters.remove(agentCenter.getAlias());
+		}
+	}
 
 	@Override
 	public Map<String, AgentCenter> getAgentCenters() {
 		return agentCenters;
 	}
-	
+
 }
