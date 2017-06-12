@@ -29,7 +29,7 @@ import utils.JSONConverter;
 		@ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/activateListener"),
 		@ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "300000")
 })
-public class MessageReceiveController implements MessageListener {
+public class HandshakeMessageReceiveController implements MessageListener {
 	
 	@EJB
 	AppManagementLocal appManagement;
@@ -51,7 +51,6 @@ public class MessageReceiveController implements MessageListener {
 			} catch (Exception e) {
 				System.out.println("Connection is already opened!");
 			}
-			
 		}
 	}
 
@@ -78,7 +77,9 @@ public class MessageReceiveController implements MessageListener {
 				if(newAgentTypes != null) {
 					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
 					if(next) {
-						sendDataToNewCenter(message.getNewAgentCenter());
+						if(!sendDataToNewCenter(message.getNewAgentCenter())) {
+							//TODO rollback
+						}
 					}
 					
 				}
