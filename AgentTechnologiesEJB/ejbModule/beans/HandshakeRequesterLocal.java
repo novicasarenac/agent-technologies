@@ -16,6 +16,6 @@ public interface HandshakeRequesterLocal {
 	public boolean sendRegisterRequest(String address, String alias);
 	public HandshakeMessage sendGetAgentTypesRequest(AgentCenter agentCenter);
 	public HandshakeMessage notifyNode(AgentCenter newAgentCenter, List<AgentType> agentTypes, AgentCenter nodeToNotify);
-	public HandshakeMessage sendDataToNewNode(AgentCenter newNode, Map<String, AgentCenter> agentCenters, List<AgentType> agentTypes, Map<String, AID> runningAgents);
-	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, List<AgentType> newAgentTypes, Map<String, AID> runningAgents);
+	public HandshakeMessage sendDataToNewNode(AgentCenter newNode, Map<String, AgentCenter> agentCenters, Map<String, List<AgentType>> agentTypes, Map<String, AID> runningAgents);
+	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, Map<String, AID> runningAgents);
 }

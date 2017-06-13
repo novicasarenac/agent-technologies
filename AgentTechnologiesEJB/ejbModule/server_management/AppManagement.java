@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
@@ -89,6 +90,11 @@ public class AppManagement implements AppManagementLocal{
 		} else {
 			handshake(local, localAlias);
 		}
+	}
+	
+	@PreDestroy
+	public void shutdown() {
+		
 	}
 	
 	public void sendActivationMessage() {

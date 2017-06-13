@@ -78,10 +78,10 @@ public class HandshakeMessageReceiveController implements MessageListener {
 					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
 					if(next) {
 						if(!sendDataToNewCenter(message.getNewAgentCenter())) {
-							rollback(message.getNewAgentCenter(), newAgentTypes);
+							rollback(message.getNewAgentCenter());
 						}
 					} else {
-						rollback(message.getNewAgentCenter(), newAgentTypes);
+						rollback(message.getNewAgentCenter());
 					}
 				} else {
 					cleanMasterNode(message.getNewAgentCenter());
@@ -119,8 +119,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			case NOTIFY_ALL: {
 				try {
 					agentCentersManagement.register(message.getNewAgentCenter());
-					for(AgentType type : message.getAgentTypes()) 
-						agentsManagement.addAgentType(type);
+					agentsManagement.addAgentTypes(message.getNewAgentCenter(), message.getAgentTypes());
 					retVal.setStatus(true);
 				} catch (Exception e) {
 					retVal.setStatus(false);
@@ -133,8 +132,8 @@ public class HandshakeMessageReceiveController implements MessageListener {
 					for(AgentCenter center : message.getAgentCenters().values()) {
 						agentCentersManagement.register(center);
 					}
-					for(AgentType type : message.getAgentTypes()) {
-						agentsManagement.addAgentType(type);
+					for(String alias : message.getAllTypes().keySet()) {
+						agentsManagement.addAgentTypes(message.getAgentCenters().get(alias), message.getAllTypes().get(alias));
 					}
 					for(String runningAgentName : message.getRunningAgents().keySet()) {
 						agentsManagement.addRunningAgent(runningAgentName, message.getRunningAgents().get(runningAgentName));
@@ -148,9 +147,8 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			
 			case ROLLBACK: {
 				agentCentersManagement.removeCenter(message.getNewAgentCenter());
-				for(AgentType type : message.getAgentTypes()) {
-					agentsManagement.removeAgentType(type);
-				}
+				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
+				
 				if(message.getRunningAgents() != null) {
 					for(String agentName : message.getRunningAgents().keySet()) {
 						agentsManagement.removeRunningAgent(agentName);
@@ -165,7 +163,6 @@ public class HandshakeMessageReceiveController implements MessageListener {
 	
 	public List<AgentType> getNewAgentTypes(AgentCenter newAgentCenter) {
 		int numberOfTries = 0;
-		List<AgentType> retVal = new ArrayList<>();
 		HandshakeMessage response;
 		response = handshakeRequester.sendGetAgentTypesRequest(newAgentCenter);
 		
@@ -177,16 +174,12 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			} else numberOfTries = 0;
 		}
 		if(numberOfTries > 1) {
-			System.out.println("It needs callback");
 			return null;
 		} else {
-			for(AgentType type : response.getAgentTypes()) {
-				if(agentsManagement.addAgentType(type))
-					retVal.add(type);
-			}
+			agentsManagement.addAgentTypes(newAgentCenter, response.getAgentTypes());
 		}
 		
-		return retVal;
+		return response.getAgentTypes();
 	}
 	
 	public boolean notifyAllNodes(AgentCenter newAgentCenter, List<AgentType> newAgentTypes) {
@@ -204,7 +197,6 @@ public class HandshakeMessageReceiveController implements MessageListener {
 					} else numberOfTries = 0;
 				}
 				if(numberOfTries > 1) {
-					System.out.println("It needs callback");
 					return false;
 				}
 			}
@@ -225,7 +217,6 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			} else numberOfTries = 0;
 		}
 		if(numberOfTries > 1) {
-			System.out.println("It needs callback");
 			return false;
 		}
 		
@@ -236,15 +227,13 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		agentCentersManagement.removeCenter(newAgentCenter);
 	}
 	
-	public void rollback(AgentCenter newAgentCenter, List<AgentType> newAgentTypes) {
+	public void rollback(AgentCenter newAgentCenter) {
 		agentCentersManagement.removeCenter(newAgentCenter);
-		for(AgentType agentType : newAgentTypes) {
-			agentsManagement.removeAgentType(agentType);
-		}
+		agentsManagement.removeAgentTypes(newAgentCenter);
 		
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
-				handshakeRequester.cleanNode(agentCenter, newAgentCenter, newAgentTypes, null);
+				handshakeRequester.cleanNode(agentCenter, newAgentCenter, null);
 			}
 		}
 	}

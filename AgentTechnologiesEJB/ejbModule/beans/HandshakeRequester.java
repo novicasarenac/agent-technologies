@@ -27,7 +27,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.POST_NODE, new AgentCenter(alias, address), null, null, null, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.POST_NODE, new AgentCenter(alias, address), null, null, null, null, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
@@ -50,7 +50,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.GET_AGENT_CLASSES, null, null, null, null, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.GET_AGENT_CLASSES, null, null, null, null, null, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
@@ -73,7 +73,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_ALL, newAgentCenter, agentTypes, null, null, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_ALL, newAgentCenter, agentTypes, null, null, null, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
@@ -86,7 +86,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 	}
 	
 	@Override
-	public HandshakeMessage sendDataToNewNode(AgentCenter newNode, Map<String, AgentCenter> agentCenters, List<AgentType> agentTypes, Map<String, AID> runningAgents) {
+	public HandshakeMessage sendDataToNewNode(AgentCenter newNode, Map<String, AgentCenter> agentCenters, Map<String, List<AgentType>> agentTypes, Map<String, AID> runningAgents) {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
@@ -96,7 +96,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_NEW_NODE, null, agentTypes, agentCenters, runningAgents, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.NOTIFY_NEW_NODE, null, null, agentCenters, runningAgents, agentTypes, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
@@ -109,7 +109,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 	}
 	
 	@Override
-	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, List<AgentType> newAgentTypes, Map<String, AID> runningAgents) {
+	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, Map<String, AID> runningAgents) {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
@@ -119,7 +119,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.ROLLBACK, newAgentCenter, newAgentTypes, null, runningAgents, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.ROLLBACK, newAgentCenter, null, null, runningAgents, null, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		

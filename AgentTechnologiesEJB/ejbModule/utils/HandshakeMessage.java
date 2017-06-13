@@ -17,20 +17,24 @@ public class HandshakeMessage implements Serializable {
 	private List<AgentType> agentTypes;
 	private Map<String, AgentCenter> agentCenters;
 	private Map<String, AID> runningAgents;
+	private Map<String, List<AgentType>> allTypes;
 	private boolean status;
 
 	public HandshakeMessage() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public HandshakeMessage(HandshakeMessageType messsageType, AgentCenter newAgentCenter, List<AgentType> agentTypes,
-			Map<String, AgentCenter> agentCenters, Map<String, AID> runningAgents, boolean status) {
+			Map<String, AgentCenter> agentCenters, Map<String, AID> runningAgents,
+			Map<String, List<AgentType>> allTypes, boolean status) {
 		super();
 		this.messsageType = messsageType;
 		this.newAgentCenter = newAgentCenter;
 		this.agentTypes = agentTypes;
 		this.agentCenters = agentCenters;
 		this.runningAgents = runningAgents;
+		this.allTypes = allTypes;
 		this.status = status;
 	}
 
@@ -72,6 +76,14 @@ public class HandshakeMessage implements Serializable {
 
 	public void setRunningAgents(Map<String, AID> runningAgents) {
 		this.runningAgents = runningAgents;
+	}
+
+	public Map<String, List<AgentType>> getAllTypes() {
+		return allTypes;
+	}
+
+	public void setAllTypes(Map<String, List<AgentType>> allTypes) {
+		this.allTypes = allTypes;
 	}
 
 	public boolean isStatus() {

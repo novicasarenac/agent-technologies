@@ -1,26 +1,28 @@
 package beans;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
 import model.AID;
+import model.AgentCenter;
 import model.AgentType;
+import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
 import utils.AgentTypesReader;
 
 @Singleton
 public class AgentsManagement implements AgentsManagementLocal {
 
-	private List<AgentType> allTypes = new ArrayList<>();
+	@EJB
+	AppManagementLocal appManagement;
+	
+	private Map<String, List<AgentType>> allTypes = new HashMap<>();
 	private List<AgentType> supportedTypes = new ArrayList<>();
 	
 	private Map<String, AID> runningAgents = new HashMap<>();
@@ -33,37 +35,33 @@ public class AgentsManagement implements AgentsManagementLocal {
 		
 		AgentTypesReader reader = new AgentTypesReader();
 		supportedTypes = reader.readTypes(filename);
+		allTypes.put(appManagement.getLocalAlias(), new ArrayList<>());
 		for(AgentType type : supportedTypes) {
 			System.out.println("Supported type : " + type.getName());
-			if(!allTypes.contains(type))
-				allTypes.add(type);
+			allTypes.get(appManagement.getLocalAlias()).add(type);
 		}
 	}
-
+	
 	@Override
-	public boolean addAgentType(AgentType agentType) {
-		if(allTypes.stream().filter(type -> type.getName().equals(agentType.getName())).count() == 0) {
-			System.out.println("New agent type: " + agentType.getName());
-			allTypes.add(agentType);
+	public boolean addAgentTypes(AgentCenter agentCenter, List<AgentType> agentTypes) {
+		if(!allTypes.containsKey(agentCenter.getAlias())) {
+			allTypes.put(agentCenter.getAlias(), new ArrayList<>());
+			for(AgentType type : agentTypes) {
+				System.out.println(agentCenter.getAlias() + " supports agent type: " + type.getName());
+				allTypes.get(agentCenter.getAlias()).add(type);
+			}
 			return true;
 		} else return false;
 	}
 	
 	@Override
-	public void removeAgentType(AgentType agentType) {
-		System.out.println("Agent type: " + agentType.getName() + " removed");
-		AgentType typeToRemove = getAgentTypeByName(agentType.getName());
-		allTypes.remove(typeToRemove);
+	public boolean removeAgentTypes(AgentCenter agentCenter) {
+		if(allTypes.containsKey(agentCenter.getAlias())) {
+			allTypes.remove(agentCenter.getAlias());
+			return true;
+		} else return false;
 	}
-	
-	public AgentType getAgentTypeByName(String name) {
-		for(AgentType type : allTypes) {
-			if(type.getName().equals(name))
-				return type;
-		}
-		return null;
-	}
-	
+
 	@Override
 	public boolean addRunningAgent(String name, AID id) {
 		if(!runningAgents.containsKey(name)) {
@@ -87,7 +85,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 
 	@Override
-	public List<AgentType> getAllTypes() {
+	public Map<String, List<AgentType>> getAllTypes() {
 		return allTypes;
 	}
 
