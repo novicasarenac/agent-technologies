@@ -109,7 +109,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 	}
 	
 	@Override
-	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter, Map<String, AID> runningAgents) {
+	public boolean cleanNode(AgentCenter nodeToClean, AgentCenter newAgentCenter) {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
@@ -119,7 +119,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		System.out.println("SENDING TO: " + url);
 		requester.connect(url);
 		
-		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.ROLLBACK, newAgentCenter, null, null, runningAgents, null, true);
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.ROLLBACK, newAgentCenter, null, null, null, null, true);
 		String jsonObject = JSONConverter.convertToJSON(message);
 		requester.send(jsonObject, 0);
 		
@@ -130,5 +130,5 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		context.term();
 		return response.isStatus();
 	}
-
+	
 }

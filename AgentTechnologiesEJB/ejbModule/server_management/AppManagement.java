@@ -22,6 +22,7 @@ import org.zeromq.ZMQ;
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
 import beans.HandshakeRequesterLocal;
+import beans.ShutdownRequesterLocal;
 import exceptions.AliasExistsException;
 import model.AgentCenter;
 import utils.HandshakeMessage;
@@ -46,6 +47,9 @@ public class AppManagement implements AppManagementLocal{
 	
 	@EJB
 	HandshakeRequesterLocal handshakeRequester;
+	
+	@EJB
+	ShutdownRequesterLocal shutdownRequester;
 	
 	@Inject
 	JMSContext context;
@@ -94,7 +98,7 @@ public class AppManagement implements AppManagementLocal{
 	
 	@PreDestroy
 	public void shutdown() {
-		
+		shutdownRequester.shutdown(agentCentersManagement.getAgentCenters().get(localAlias));
 	}
 	
 	public void sendActivationMessage() {

@@ -148,14 +148,11 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			case ROLLBACK: {
 				agentCentersManagement.removeCenter(message.getNewAgentCenter());
 				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
-				
-				if(message.getRunningAgents() != null) {
-					for(String agentName : message.getRunningAgents().keySet()) {
-						agentsManagement.removeRunningAgent(agentName);
-					}
-				}
+
+				retVal.setStatus(true);
 				break;
 			}
+			
 		}
 		
 		return retVal;
@@ -233,7 +230,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
-				handshakeRequester.cleanNode(agentCenter, newAgentCenter, null);
+				handshakeRequester.cleanNode(agentCenter, newAgentCenter);
 			}
 		}
 	}

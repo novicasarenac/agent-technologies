@@ -72,11 +72,16 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 	
 	@Override
-	public boolean removeRunningAgent(String name) {
-		if(runningAgents.containsKey(name)) {
-			runningAgents.remove(name);
-			return true;
-		} else return false;
+	public void removeRunningAgents(AgentCenter agentCenter) {
+		List<String> agentsToRemove = new ArrayList<>();
+		for(String key : runningAgents.keySet()) {
+			if(agentCenter.getAlias().equals(runningAgents.get(key).getHost().getAlias()))
+				agentsToRemove.add(key);
+		}
+		
+		for(String key : agentsToRemove) {
+			runningAgents.remove(key);
+		}
 	}
 
 	@Override
