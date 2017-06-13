@@ -15,11 +15,13 @@ import org.zeromq.ZMQ;
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
 import beans.HandshakeRequesterLocal;
+import beans.ShutdownRequesterLocal;
 import exceptions.AliasExistsException;
 import model.AgentCenter;
 import model.AgentType;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
+import sun.management.resources.agent;
 import utils.HandshakeMessage;
 import utils.HandshakeMessageType;
 import utils.JSONConverter;
@@ -42,6 +44,9 @@ public class HandshakeMessageReceiveController implements MessageListener {
 	
 	@EJB
 	HandshakeRequesterLocal handshakeRequester;
+	
+	@EJB
+	ShutdownRequesterLocal shutdownRequester;
 	
 	@Override
 	public void onMessage(Message arg0) {
@@ -86,6 +91,10 @@ public class HandshakeMessageReceiveController implements MessageListener {
 				} else {
 					cleanMasterNode(message.getNewAgentCenter());
 				}
+			}
+			
+			if(replyMessage.isStatus() && message.getMesssageType() == HandshakeMessageType.SHUTDOWN && appManagement.isMaster()) {
+				sendShutdownToAllNodes(message.getNewAgentCenter());
 			}
 		}
 		
@@ -151,6 +160,14 @@ public class HandshakeMessageReceiveController implements MessageListener {
 
 				retVal.setStatus(true);
 				break;
+			}
+			
+			case SHUTDOWN: {
+				agentCentersManagement.removeCenter(message.getNewAgentCenter());
+				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
+				agentsManagement.removeRunningAgents(message.getNewAgentCenter());
+				
+				retVal.setStatus(true);
 			}
 			
 		}
@@ -231,6 +248,14 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
 				handshakeRequester.cleanNode(agentCenter, newAgentCenter);
+			}
+		}
+	}
+	
+	public void sendShutdownToAllNodes(AgentCenter agentCenter) {
+		for(AgentCenter center : agentCentersManagement.getAgentCenters().values()) {
+			if(!center.getAlias().equals(agentCenter.getAlias()) && !center.getAlias().equals(appManagement.getLocalAlias())) {
+				shutdownRequester.shutdownToNode(center, agentCenter);
 			}
 		}
 	}

@@ -7,6 +7,6 @@ import model.AgentCenter;
 @Local
 public interface ShutdownRequesterLocal {
 
-	public void shutdown(AgentCenter agentCenter);
+	public void shutdownToNode(AgentCenter recipient, AgentCenter agentCenter);
 	
 }

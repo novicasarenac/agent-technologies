@@ -57,6 +57,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 	@Override
 	public boolean removeAgentTypes(AgentCenter agentCenter) {
 		if(allTypes.containsKey(agentCenter.getAlias())) {
+			System.out.println("Agent types of " + agentCenter.getAlias() + " removed");
 			allTypes.remove(agentCenter.getAlias());
 			return true;
 		} else return false;

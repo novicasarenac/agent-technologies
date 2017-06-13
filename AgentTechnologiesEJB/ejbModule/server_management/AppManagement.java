@@ -98,7 +98,22 @@ public class AppManagement implements AppManagementLocal{
 	
 	@PreDestroy
 	public void shutdown() {
-		shutdownRequester.shutdown(agentCentersManagement.getAgentCenters().get(localAlias));
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String url = "tcp://localhost:" + SystemPropertiesKeys.MASTER_TCP_PORT;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		HandshakeMessage message = new HandshakeMessage(HandshakeMessageType.SHUTDOWN, new AgentCenter(localAlias, local), null, null, null, null, true);
+		String jsonObject = JSONConverter.convertToJSON(message);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		
+		requester.close();
+		context.term();
 	}
 	
 	public void sendActivationMessage() {
