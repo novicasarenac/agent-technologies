@@ -168,6 +168,16 @@ public class HandshakeMessageReceiveController implements MessageListener {
 				agentsManagement.removeRunningAgents(message.getNewAgentCenter());
 				
 				retVal.setStatus(true);
+				break;
+			}
+			
+			case HEARTBEAT_SHUTDOWN: {
+				agentCentersManagement.removeCenter(message.getNewAgentCenter());
+				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
+				agentsManagement.removeRunningAgents(message.getNewAgentCenter());
+				
+				retVal.setStatus(true);
+				break;
 			}
 			
 		}

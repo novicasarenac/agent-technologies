@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.LockType;
+import javax.ejb.Lock;
 import javax.ejb.Singleton;
 
 import model.AID;
@@ -55,6 +57,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 	
 	@Override
+	@Lock(LockType.READ)
 	public boolean removeAgentTypes(AgentCenter agentCenter) {
 		if(allTypes.containsKey(agentCenter.getAlias())) {
 			System.out.println("Agent types of " + agentCenter.getAlias() + " removed");
@@ -73,6 +76,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 	
 	@Override
+	@Lock(LockType.WRITE)
 	public void removeRunningAgents(AgentCenter agentCenter) {
 		List<String> agentsToRemove = new ArrayList<>();
 		for(String key : runningAgents.keySet()) {

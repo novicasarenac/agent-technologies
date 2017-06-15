@@ -38,6 +38,7 @@ public class AppManagement implements AppManagementLocal{
 	private String localAlias;
 	private String portOffset;
 	private boolean listenerStarted;
+	private boolean heartbeatListenerStarted;
 	
 	@EJB
 	AgentCentersManagementLocal agentCentersManagement;
@@ -56,6 +57,9 @@ public class AppManagement implements AppManagementLocal{
 	
 	@Resource(mappedName = "java:/jms/queue/activateListener")
 	private Destination destination;
+	
+	@Resource(mappedName = "java:/jms/queue/heartbeatListener")
+	private Destination destinationHeartbeat;
 	
 	@PostConstruct
 	public void initialize() {
@@ -85,6 +89,7 @@ public class AppManagement implements AppManagementLocal{
 		
 		System.out.println("Local address: " + local + "\tLocal alias: " + localAlias);
 		sendActivationMessage();
+		activateHeartbeatListener();
 		if(isMaster()) {
 			try {
 				agentCentersManagement.register(new AgentCenter(localAlias, local));
@@ -122,6 +127,12 @@ public class AppManagement implements AppManagementLocal{
 		producer.send(destination, message);
 	}
 	
+	public void activateHeartbeatListener() {
+		String message = "Activation";
+		JMSProducer producer = context.createProducer();
+		producer.send(destinationHeartbeat, message);
+	}
+	
 	@Override
 	public void handshake(String address, String alias) {
 		int numberOfTries = 0;
@@ -156,6 +167,18 @@ public class AppManagement implements AppManagementLocal{
 	@Override
 	public boolean isMaster() {
 		return master == null;
+	}
+
+	@Override
+	@Lock(LockType.READ)
+	public boolean isHeartbeatListenerStarted() {
+		return heartbeatListenerStarted;
+	}
+	
+	@Override
+	@Lock(LockType.WRITE)
+	public void setHeartbeatListenerStarted(boolean started) {
+		heartbeatListenerStarted = started;
 	}
 	
 }

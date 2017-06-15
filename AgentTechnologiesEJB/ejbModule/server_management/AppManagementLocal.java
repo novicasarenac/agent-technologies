@@ -10,6 +10,8 @@ public interface AppManagementLocal {
 	public String getPortOffset();
 	public String getLocalAlias();
 	public boolean isListenerStarted();
+	public void setHeartbeatListenerStarted(boolean started);
+	public boolean isHeartbeatListenerStarted();
 	public void setListenerStarted(boolean started);
 	
 }
