@@ -61,7 +61,8 @@ public class HeartbeatRequester implements HeartbeatRequesterLocal {
 				}
 				
 				requester.close();
-				context.term();
+				if(reply != null)
+					context.term();
 			}
 		}
 
@@ -71,12 +72,14 @@ public class HeartbeatRequester implements HeartbeatRequesterLocal {
 	public void removeUnactiveCenters(List<AgentCenter> listToRemove) {
 		for(AgentCenter center : listToRemove) {
 			agentCenterManagement.removeCenter(center);
-			agentsManagement.removeAgentTypes(center);
+			boolean exists = agentsManagement.removeAgentTypes(center);
 			agentsManagement.removeRunningAgents(center);
 			
-			for(AgentCenter recipient : agentCenterManagement.getAgentCenters().values()) {
-				if(!recipient.getAlias().equals(center.getAlias()) && !recipient.getAlias().equals(appManagement.getLocalAlias())) {
-					shutdownRequester.heartbeatShutdownNode(recipient, center);
+			if(exists) {
+				for(AgentCenter recipient : agentCenterManagement.getAgentCenters().values()) {
+					if(!recipient.getAlias().equals(center.getAlias()) && !recipient.getAlias().equals(appManagement.getLocalAlias())) {
+						shutdownRequester.heartbeatShutdownNode(recipient, center);
+					}
 				}
 			}
 		}
