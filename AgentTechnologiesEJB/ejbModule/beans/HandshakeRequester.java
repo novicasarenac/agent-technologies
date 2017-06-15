@@ -44,6 +44,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		requester.setReceiveTimeOut(5000);
 		String centerPort =  (agentCenter.getAddress().split(":"))[1];
 		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT;
 		String url = "tcp://localhost:" + port;
@@ -55,7 +56,10 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		requester.send(jsonObject, 0);
 		
 		String reply = requester.recvStr(0);
-		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		HandshakeMessage response;
+		if(reply != null)
+			response = JSONConverter.convertFromJSON(reply);
+		else response = null;
 		
 		requester.close();
 		context.term();
@@ -67,6 +71,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		requester.setReceiveTimeOut(5000);
 		String centerPort =  (nodeToNotify.getAddress().split(":"))[1];
 		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT;
 		String url = "tcp://localhost:" + port;
@@ -78,7 +83,10 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		requester.send(jsonObject, 0);
 		
 		String reply = requester.recvStr(0);
-		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		HandshakeMessage response;
+		if(reply != null)
+			response = JSONConverter.convertFromJSON(reply);
+		else response = null;
 		
 		requester.close();
 		context.term();
@@ -90,6 +98,7 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		ZMQ.Context context = ZMQ.context(1);
 		
 		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		requester.setReceiveTimeOut(5000);
 		String centerPort =  (newNode.getAddress().split(":"))[1];
 		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT;
 		String url = "tcp://localhost:" + port;
@@ -101,7 +110,10 @@ public class HandshakeRequester implements HandshakeRequesterLocal {
 		requester.send(jsonObject, 0);
 		
 		String reply = requester.recvStr(0);
-		HandshakeMessage response = JSONConverter.convertFromJSON(reply);
+		HandshakeMessage response;
+		if(reply != null)
+			response = JSONConverter.convertFromJSON(reply);
+		else response = null;
 		
 		requester.close();
 		context.term();

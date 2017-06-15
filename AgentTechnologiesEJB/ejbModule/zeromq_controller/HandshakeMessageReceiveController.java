@@ -190,10 +190,10 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		HandshakeMessage response;
 		response = handshakeRequester.sendGetAgentTypesRequest(newAgentCenter);
 		
-		if(!response.isStatus()) {
+		if(!response.isStatus() || response == null) {
 			numberOfTries++;
 			response = handshakeRequester.sendGetAgentTypesRequest(newAgentCenter);
-			if(!response.isStatus()) {
+			if(!response.isStatus()  || response == null) {
 				numberOfTries++;
 			} else numberOfTries = 0;
 		}
@@ -213,10 +213,10 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			if(!agentCenter.getAlias().equals(newAgentCenter.getAlias()) && !agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
 				response = handshakeRequester.notifyNode(newAgentCenter, newAgentTypes, agentCenter);
 				
-				if(!response.isStatus()) {
+				if(!response.isStatus() || response == null) {
 					numberOfTries++;
 					response = handshakeRequester.notifyNode(newAgentCenter, newAgentTypes, agentCenter);
-					if(!response.isStatus()) {
+					if(!response.isStatus() || response == null) {
 						numberOfTries++;
 					} else numberOfTries = 0;
 				}
@@ -233,10 +233,10 @@ public class HandshakeMessageReceiveController implements MessageListener {
 		HandshakeMessage response;
 		int numberOfTries = 0;
 		response = handshakeRequester.sendDataToNewNode(newCenter, agentCentersManagement.getAgentCenters(), agentsManagement.getAllTypes(), agentsManagement.getRunningAgents());
-		if(!response.isStatus()) {
+		if(!response.isStatus() || response == null) {
 			numberOfTries++;
 			response = handshakeRequester.sendDataToNewNode(newCenter, agentCentersManagement.getAgentCenters(), agentsManagement.getAllTypes(), agentsManagement.getRunningAgents());
-			if(!response.isStatus()) {
+			if(!response.isStatus() || response == null) {
 				numberOfTries++;
 			} else numberOfTries = 0;
 		}
