@@ -33,40 +33,57 @@ public class HeartbeatRequester implements HeartbeatRequesterLocal {
 
 	@Override
 	@Schedule(hour = "*", minute = "*", persistent = false)
-	public void sendMessage() {
+	public void heartbeat() {
 		List<AgentCenter> centersToRemove = new ArrayList<>();
 		
 		for(AgentCenter agentCenter : agentCenterManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
-				ZMQ.Context context = ZMQ.context(1);
-				
-				ZMQ.Socket requester = context.socket(ZMQ.REQ);
-				requester.setReceiveTimeOut(5000);
-				String centerPort =  (agentCenter.getAddress().split(":"))[1];
-				int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 1;
-				
-				String url = "tcp://localhost:" + port;
-				System.out.println("SENDING TO: " + url);
-				requester.connect(url);
-				
-				String message = "Heartbeat message";
-				requester.send(message, 0);
-				String reply = requester.recvStr(0);
-			
-				if(reply == null) {
-					centersToRemove.add(agentCenter);
-					System.out.println("Host " + agentCenter.getAlias() + " is dead.");
-				} else {
-					System.out.println("Host " + agentCenter.getAlias() + " is alive.");
+				int numberOfTries = 0;
+				if(!sendMessage(agentCenter)) {
+					numberOfTries++;
+					if(!sendMessage(agentCenter))
+						numberOfTries++;
+					else numberOfTries = 0;
 				}
 				
-				requester.close();
-				if(reply != null)
-					context.term();
+				if(numberOfTries > 1)
+					centersToRemove.add(agentCenter);
 			}
 		}
 
 		removeUnactiveCenters(centersToRemove);
+	}
+	
+	public boolean sendMessage(AgentCenter agentCenter) {
+		boolean retVal;
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		requester.setReceiveTimeOut(5000);
+		String centerPort =  (agentCenter.getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 1;
+		
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		String message = "Heartbeat message";
+		requester.send(message, 0);
+		String reply = requester.recvStr(0);
+	
+		if(reply == null) {
+			retVal = false;
+			System.out.println("Host " + agentCenter.getAlias() + " is dead.");
+		} else {
+			retVal = true;
+			System.out.println("Host " + agentCenter.getAlias() + " is alive.");
+		}
+		
+		requester.close();
+		if(reply != null)
+			context.term();
+		
+		return retVal;
 	}
 	
 	public void removeUnactiveCenters(List<AgentCenter> listToRemove) {

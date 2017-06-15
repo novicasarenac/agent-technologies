@@ -2,6 +2,6 @@ package heartbeat_protocol;
 
 public interface HeartbeatRequesterLocal {
 
-	public void sendMessage();
+	public void heartbeat();
 	
 }
