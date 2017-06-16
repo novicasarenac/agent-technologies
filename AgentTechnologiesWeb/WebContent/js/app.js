@@ -1,0 +1,1 @@
+var app = angular.module('agentsPlayground', ['agentsPlayground.routes', 'agentsPlayground.controllers']);
