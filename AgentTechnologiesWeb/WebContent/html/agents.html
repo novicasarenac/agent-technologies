@@ -1,4 +1,166 @@
 <div ng-controller="AgentsManagementController">
-	<h1>WELCOME</h1>
-
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 col-lg-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Available Agents
+                </div>
+                <div class="panel-body">
+                    <div class="list-group">
+					  <a class="list-group-item">Ping</a>
+					  <a class="list-group-item">Pong</a>
+					</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Message
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+	                    <label for="performative" class="control-label">
+	                        Performative:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <select id="performative" ng-options="" ng-model="" class="form-control">
+	                            <option value="">---</option>
+	                        </select>
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label for="sender" class="control-label">
+	                        Sender:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <select id="sender" ng-options="" ng-model="" class="form-control">
+	                            <option value="">---</option>
+	                        </select>
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label for="receiver" class="control-label">
+	                        Receiver:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <select id="receiver" ng-options="" ng-model="" class="form-control">
+	                            <option value="">---</option>
+	                        </select>
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label for="replyTo" class="control-label">
+	                        Reply to:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <select id="replyTo" ng-options="" ng-model="" class="form-control">
+	                            <option value="">---</option>
+	                        </select>
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Content:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Language:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Encoding:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Ontology:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Protocol:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Conversation ID:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Reply with:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="control-label">
+	                        Reply by:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" ng-model="" class="form-control">
+	                    </div>
+	                </div>
+	                <div class="form-group">
+	                    <button type="button" class="btn btn-primary save" ng-click="">Send ACL message</button>
+	                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Running agents
+                </div>
+                <div class="panel-body"  style="max-height: 200px; overflow-y: scroll;">
+                    <div class="list-group">
+					  <a class="list-group-item">Ping</a>
+					  <a class="list-group-item">Pong</a>
+					  <a class="list-group-item">Ping</a>
+					  <a class="list-group-item">Pong</a>
+					  <a class="list-group-item">Ping</a>
+					  <a class="list-group-item">Pong</a>
+					</div>
+                </div>
+            </div>
+            
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Messages
+                </div>
+                <div class="panel-body" style="max-height: 400px; overflow-y: scroll;">
+                    <div class="list-group">
+					  <a class="list-group-item">Ping</a>
+					  <a class="list-group-item">Pong</a>
+					  <a class="list-group-item">Pong</a>
+					  <a class="list-group-item">Pong</a>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
