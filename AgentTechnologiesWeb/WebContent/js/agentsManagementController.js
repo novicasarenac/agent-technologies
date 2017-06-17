@@ -1,7 +1,21 @@
 angular.module('agentsPlayground.AgentsManagementController', [])
-	   .controller('AgentsManagementController', function($scope, $rootScope, $location) {
+	   .controller('AgentsManagementController', function($scope, $rootScope, $location, AgentsManagementFactory) {
 		   var url = window.location;
 		   var host = "ws://" + url.hostname + ":" + url.port + "/AgentsPlayground/agentRequest";
+		   
+		   $scope.agentTypes = [];
+		   $scope.runningAgents = [];
+		   function initREST() {
+			   AgentsManagementFactory.getAgentTypes().success(function(data) {
+				   $scope.agentTypes = data;
+			   });
+			   
+			   AgentsManagementFactory.getRunningAgents().success(function(data) {
+				   $scope.runningAgents = data;
+			   });
+		   } 
+		   initREST();
+		   
 		   try {
 			   socket = new WebSocket(host);
 			   

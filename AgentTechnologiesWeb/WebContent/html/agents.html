@@ -7,9 +7,8 @@
                     Available Agents
                 </div>
                 <div class="panel-body">
-                    <div class="list-group">
-					  <a class="list-group-item">Ping</a>
-					  <a class="list-group-item">Pong</a>
+                    <div class="list-group" ng-repeat="agentType in agentTypes">
+					  <a class="list-group-item">{{agentType.name}}</a>
 					</div>
                 </div>
             </div>
@@ -25,7 +24,7 @@
 	                        Performative:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <select id="performative" ng-options="" ng-model="" class="form-control">
+	                        <select id="performative" class="form-control">
 	                            <option value="">---</option>
 	                        </select>
 	                    </div>
@@ -35,7 +34,7 @@
 	                        Sender:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <select id="sender" ng-options="" ng-model="" class="form-control">
+	                        <select id="sender" class="form-control">
 	                            <option value="">---</option>
 	                        </select>
 	                    </div>
@@ -45,7 +44,7 @@
 	                        Receiver:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <select id="receiver" ng-options="" ng-model="" class="form-control">
+	                        <select id="receiver" class="form-control">
 	                            <option value="">---</option>
 	                        </select>
 	                    </div>
@@ -55,7 +54,7 @@
 	                        Reply to:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <select id="replyTo" ng-options="" ng-model="" class="form-control">
+	                        <select id="replyTo" class="form-control">
 	                            <option value="">---</option>
 	                        </select>
 	                    </div>
@@ -65,7 +64,7 @@
 	                        Content:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -73,7 +72,7 @@
 	                        Language:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -81,7 +80,7 @@
 	                        Encoding:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -89,7 +88,7 @@
 	                        Ontology:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -97,7 +96,7 @@
 	                        Protocol:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -105,7 +104,7 @@
 	                        Conversation ID:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -113,7 +112,7 @@
 	                        Reply with:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
@@ -121,11 +120,11 @@
 	                        Reply by:
 	                    </label>
 	                    <div class="input-wrap">
-	                        <input type="text" ng-model="" class="form-control">
+	                        <input type="text" class="form-control">
 	                    </div>
 	                </div>
 	                <div class="form-group">
-	                    <button type="button" class="btn btn-primary save" ng-click="">Send ACL message</button>
+	                    <button type="button" class="btn btn-primary save">Send ACL message</button>
 	                </div>
                 </div>
             </div>
@@ -136,13 +135,8 @@
                     Running agents
                 </div>
                 <div class="panel-body"  style="max-height: 200px; overflow-y: scroll;">
-                    <div class="list-group">
-					  <a class="list-group-item">Ping</a>
-					  <a class="list-group-item">Pong</a>
-					  <a class="list-group-item">Ping</a>
-					  <a class="list-group-item">Pong</a>
-					  <a class="list-group-item">Ping</a>
-					  <a class="list-group-item">Pong</a>
+                    <div class="list-group" ng-repeat="runningAgent in runningAgents">
+					  <a class="list-group-item">{{runningAgent.name}}</a>
 					</div>
                 </div>
             </div>
