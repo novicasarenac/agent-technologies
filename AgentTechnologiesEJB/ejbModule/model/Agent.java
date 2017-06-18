@@ -2,12 +2,15 @@ package model;
 
 import java.io.Serializable;
 
-public abstract class Agent implements Serializable {
+public abstract class Agent implements AgentRemote {
 	
 	private AID id;
 	
-	public abstract void handleMessage(ACLMessage message);
-
+	@Override
+	public void init(AID aid) {
+		this.id = aid;
+	}
+	
 	public AID getId() {
 		return id;
 	}
