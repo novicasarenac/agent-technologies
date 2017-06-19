@@ -28,4 +28,26 @@ public class JSONConverter {
 		return handshakeMessage;
 	}
 	
+	public static String convertAgentCommunicationMessageToJSON(AgentsCommunicationMessage agentsCommunicationMessage) {
+		String jsonMessage = "";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			jsonMessage = mapper.writeValueAsString(agentsCommunicationMessage);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return jsonMessage;
+	}
+	
+	public static AgentsCommunicationMessage convertAgentCommunicationMessageFromJSON(String message) {
+		AgentsCommunicationMessage agentsCommunicationMessage = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			agentsCommunicationMessage = mapper.readValue(message, AgentsCommunicationMessage.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return agentsCommunicationMessage;
+	}
+	
 }

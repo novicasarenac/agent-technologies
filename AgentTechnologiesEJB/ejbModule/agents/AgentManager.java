@@ -10,7 +10,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
+import beans.AgentsRequesterLocal;
 import exceptions.NameExistsException;
 import model.AID;
 import model.AgentCenter;
@@ -27,7 +29,13 @@ public class AgentManager implements AgentManagerLocal {
 	AgentsManagementLocal agentsManagement;
 	
 	@EJB
+	AgentCentersManagementLocal agentCentersManagement;
+	
+	@EJB
 	AppManagementLocal appManagement;
+	
+	@EJB
+	AgentsRequesterLocal agentsRequester;
 	
 	@PostConstruct
 	public void init() {
@@ -36,11 +44,11 @@ public class AgentManager implements AgentManagerLocal {
 
 	@Override
 	public AID runAgent(String name, AgentType agentType) throws NameExistsException {
-		AgentLocal agent;
 		if(agentsManagement.getRunningAgents().keySet().contains(name)) {
 			throw new NameExistsException();
 		}
-		else {
+		if(agentsManagement.getSupportedTypes().stream().anyMatch(type -> type.getName().equals(agentType.getName()))) {
+			AgentLocal agent;
 			try {
 				Context context = new InitialContext();
 				String beanName = "java:module/" + agentType.getName();
@@ -52,8 +60,20 @@ public class AgentManager implements AgentManagerLocal {
 			} catch (NamingException e) {
 				e.printStackTrace();
 			}
+			return null;
+		} else {
+			for(String key : agentsManagement.getAllTypes().keySet()) {
+				if(agentsManagement.getAllTypes().get(key).stream().anyMatch(type -> type.getName().equals(agentType.getName()))) {
+					AgentCenter agentCenter = agentCentersManagement.getAgentCenters().get(key);
+					boolean started = agentsRequester.sendRunAgentRequest(agentCenter, name, agentType);
+					if(started) {
+						return new AID(name, agentCenter, agentType);
+					} else {
+						return null;
+					}
+				}
+			}
 		}
-		
 		return null;
 	}
 
