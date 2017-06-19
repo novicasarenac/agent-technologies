@@ -1,5 +1,5 @@
 package utils;
 
 public enum AgentsCommunicationMessageType {
-	RUN_AGENT, STOP_AGENT, ACL_MESSAGE
+	RUN_AGENT, STOP_AGENT, ACL_MESSAGE, ADD_RUNNING_AGENT
 }

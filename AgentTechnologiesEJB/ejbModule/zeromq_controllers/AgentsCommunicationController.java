@@ -10,6 +10,7 @@ import javax.jms.MessageListener;
 import org.zeromq.ZMQ;
 
 import agents.AgentManagerLocal;
+import beans.AgentsManagementLocal;
 import model.AID;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
@@ -29,6 +30,9 @@ public class AgentsCommunicationController implements MessageListener {
 	
 	@EJB
 	AgentManagerLocal agentManager;
+	
+	@EJB
+	AgentsManagementLocal agentsManagement;
 	
 	@Override
 	public void onMessage(Message arg0) {
@@ -69,10 +73,14 @@ public class AgentsCommunicationController implements MessageListener {
 			case RUN_AGENT: {
 				AID retVal = agentManager.runAgent(message.getName(), message.getAgentType());
 				if(retVal != null) {
-					response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
+					response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
 				} else {
-					response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, false);
+					response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.RUN_AGENT, false);
 				}
+			}
+			case ADD_RUNNING_AGENT: {
+				agentsManagement.addRunningAgent(message.getAid().getName(), message.getAid());
+				response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.ADD_RUNNING_AGENT, true);
 			}
 		}
 		return response;

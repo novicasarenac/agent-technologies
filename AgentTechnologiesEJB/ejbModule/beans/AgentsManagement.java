@@ -69,6 +69,7 @@ public class AgentsManagement implements AgentsManagementLocal {
 	@Override
 	public boolean addRunningAgent(String name, AID id) {
 		if(!runningAgents.containsKey(name)) {
+			System.out.println("Agent " + name + " is running at " + id.getHost().getAlias());
 			runningAgents.put(name, id);
 			return true;
 		}

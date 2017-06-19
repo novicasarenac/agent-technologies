@@ -15,5 +15,6 @@ public interface AgentManagerLocal {
 	public AID runAgent(String name, AgentType agentType) throws NameExistsException;
 	public void stopAgent(String name);
 	public Map<String, AgentLocal> getRunningAgents();
+	public void sendRunningAgentNotification(AID aid);
 	
 }

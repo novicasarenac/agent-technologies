@@ -56,6 +56,8 @@ public class AgentManager implements AgentManagerLocal {
 				agent.setId(new AID(name, new AgentCenter(appManagement.getLocalAlias(), appManagement.getLocal()), agentType));
 				localAgents.put(name, agent);
 				System.out.println("Agent " + agent.getId().getName() + " started!");
+				agentsManagement.addRunningAgent(name, agent.getId());
+				sendRunningAgentNotification(agent.getId());
 				return agent.getId();
 			} catch (NamingException e) {
 				e.printStackTrace();
@@ -67,7 +69,9 @@ public class AgentManager implements AgentManagerLocal {
 					AgentCenter agentCenter = agentCentersManagement.getAgentCenters().get(key);
 					boolean started = agentsRequester.sendRunAgentRequest(agentCenter, name, agentType);
 					if(started) {
-						return new AID(name, agentCenter, agentType);
+						AID aid = new AID(name, agentCenter, agentType);
+						agentsManagement.addRunningAgent(name, aid);
+						return aid;
 					} else {
 						return null;
 					}
@@ -85,6 +89,15 @@ public class AgentManager implements AgentManagerLocal {
 	@Override
 	public Map<String, AgentLocal> getRunningAgents() {
 		return localAgents;
+	}
+	
+	@Override
+	public void sendRunningAgentNotification(AID aid) {
+		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
+			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
+				agentsRequester.sendNewRunningAgent(agentCenter, aid);
+			}
+		}
 	}
 	
 }
