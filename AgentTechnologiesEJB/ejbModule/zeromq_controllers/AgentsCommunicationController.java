@@ -56,17 +56,26 @@ public class AgentsCommunicationController implements MessageListener {
 			String request = responder.recvStr(0);
 			AgentsCommunicationMessage message = JSONConverter.convertAgentCommunicationMessageFromJSON(request);
 			
-			AID retVal = agentManager.runAgent(message.getName(), message.getAgentType());
-			AgentsCommunicationMessage response;
-			if(retVal != null) {
-				response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
-			} else {
-				response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, false);
-			}
+			AgentsCommunicationMessage response = processMessage(message);
 			String jsonReply = JSONConverter.convertAgentCommunicationMessageToJSON(response);
 			
 			responder.send(jsonReply, 0);
 		}
+	}
+	
+	public AgentsCommunicationMessage processMessage(AgentsCommunicationMessage message) throws Exception {
+		AgentsCommunicationMessage response = null;
+		switch(message.getAgentsCommunicationMessageType()) {
+			case RUN_AGENT: {
+				AID retVal = agentManager.runAgent(message.getName(), message.getAgentType());
+				if(retVal != null) {
+					response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
+				} else {
+					response = new AgentsCommunicationMessage(null, null, null, AgentsCommunicationMessageType.RUN_AGENT, false);
+				}
+			}
+		}
+		return response;
 	}
 	
 }
