@@ -9,8 +9,6 @@ import model.AgentType;
 import server_management.SystemPropertiesKeys;
 import utils.AgentsCommunicationMessage;
 import utils.AgentsCommunicationMessageType;
-import utils.HandshakeMessage;
-import utils.HandshakeMessageType;
 import utils.JSONConverter;
 
 @Stateless

@@ -14,5 +14,7 @@ public interface AppManagementLocal {
 	public void setHeartbeatListenerStarted(boolean started);
 	public boolean isHeartbeatListenerStarted();
 	public void setListenerStarted(boolean started);
+	public boolean isAgentsCommunicationListenerStarted();
+	public void setAgentsCommunicationListenerStarted(boolean agentsCommunicationListenerStarted);
 	
 }

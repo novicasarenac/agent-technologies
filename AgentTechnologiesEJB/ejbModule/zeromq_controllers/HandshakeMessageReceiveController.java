@@ -1,4 +1,4 @@
-package zeromq_controller;
+package zeromq_controllers;
 
 import java.util.ArrayList;
 import java.util.List;

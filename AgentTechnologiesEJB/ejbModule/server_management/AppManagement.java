@@ -31,7 +31,7 @@ import utils.JSONConverter;
 
 @Singleton(name = "AppManagement")
 @Startup
-public class AppManagement implements AppManagementLocal{
+public class AppManagement implements AppManagementLocal {
 
 	private String master;
 	private String local;
@@ -39,6 +39,7 @@ public class AppManagement implements AppManagementLocal{
 	private String portOffset;
 	private boolean listenerStarted;
 	private boolean heartbeatListenerStarted;
+	private boolean agentsCommunicationListenerStarted;
 	
 	@EJB
 	AgentCentersManagementLocal agentCentersManagement;
@@ -60,6 +61,9 @@ public class AppManagement implements AppManagementLocal{
 	
 	@Resource(mappedName = "java:/jms/queue/heartbeatListener")
 	private Destination destinationHeartbeat;
+	
+	@Resource(mappedName = "java:/jms/queue/agentsCommunicationListener")
+	private Destination destinationAgentsCommunication;
 	
 	@PostConstruct
 	public void initialize() {
@@ -90,6 +94,7 @@ public class AppManagement implements AppManagementLocal{
 		System.out.println("Local address: " + local + "\tLocal alias: " + localAlias);
 		sendActivationMessage();
 		activateHeartbeatListener();
+		activateAgentsCommunicationListener();
 		if(isMaster()) {
 			try {
 				agentCentersManagement.register(new AgentCenter(localAlias, local));
@@ -131,6 +136,12 @@ public class AppManagement implements AppManagementLocal{
 		String message = "Activation";
 		JMSProducer producer = context.createProducer();
 		producer.send(destinationHeartbeat, message);
+	}
+	
+	public void activateAgentsCommunicationListener() {
+		String message = "Activation";
+		JMSProducer producer = context.createProducer();
+		producer.send(destinationAgentsCommunication, message);
 	}
 	
 	@Override
@@ -184,6 +195,18 @@ public class AppManagement implements AppManagementLocal{
 	@Lock(LockType.WRITE)
 	public void setHeartbeatListenerStarted(boolean started) {
 		heartbeatListenerStarted = started;
+	}
+	
+	@Override
+	@Lock(LockType.READ)
+	public boolean isAgentsCommunicationListenerStarted() {
+		return agentsCommunicationListenerStarted;
+	}
+
+	@Override
+	@Lock(LockType.WRITE)
+	public void setAgentsCommunicationListenerStarted(boolean agentsCommunicationListenerStarted) {
+		this.agentsCommunicationListenerStarted = agentsCommunicationListenerStarted;
 	}
 	
 }
