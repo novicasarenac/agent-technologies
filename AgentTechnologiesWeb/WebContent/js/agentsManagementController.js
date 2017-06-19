@@ -51,6 +51,24 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   });
 		   }
 		   
+		   var runAgentWS = function(name) {
+			   var message = {
+					   'name' : name,
+					   'newAgentType' : $scope.selectedType,
+					   'aid' : null,
+					   'agentTypes' : null,
+					   'aclMessage' : null,
+					   'messageType' : 'RUN_AGENT'
+			   };
+			   
+			   try {
+				   var messageJSON = angular.toJson(message);
+				   socket.send(messageJSON);
+			   } catch(exception) {
+				   console.log('Error!');
+			   }
+		   }
+		   
 		   $scope.selectType = function(type) {
 			   $scope.selectedType = type;
 		   }

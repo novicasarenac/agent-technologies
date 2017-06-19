@@ -25,13 +25,13 @@
 		<div class="col-md-3 col-lg-3">
 			<h3>Communication method: </h3>
 		</div>
-		<div class="col-md-3 col-lg-3" data-toggle="buttons">
+		<div class="col-md-3 col-lg-3" data-toggle="buttons" ng-click="changeCommunicationType()">
 	        <label class="btn btn-lg btn-primary active" style="margin-top: 10px; width: 150px">
-	            <input type="radio" name="options" id="WS" autocomplete="off" checked  ng-click="changeCommunicationType()">
+	            <input type="radio" name="options" id="WS" autocomplete="off" checked >
 	            <i class="fa fa-check"></i> Web sockets
 	        </label>
 	        <label class="btn btn-lg btn-primary" style="margin-top: 10px; width: 150px">
-	            <input type="radio" name="options" id="REST" autocomplete="off" ng-click="changeCommunicationType()">
+	            <input type="radio" name="options" id="REST" autocomplete="off">
 	            <i class="fa fa-warning"></i> REST
 	        </label>          
 	    </div>
