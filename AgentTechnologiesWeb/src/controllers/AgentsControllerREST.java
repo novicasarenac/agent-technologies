@@ -15,7 +15,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import agents.AgentManagerLocal;
 import beans.AgentsManagementLocal;
+import exceptions.NameExistsException;
 import model.AID;
 import model.AgentType;
 
@@ -25,6 +27,9 @@ public class AgentsControllerREST {
 
 	@EJB
 	AgentsManagementLocal agentsManagement;
+	
+	@EJB
+	AgentManagerLocal agentManager;
 	
 	@GET
 	@Path("/classes")
@@ -52,8 +57,15 @@ public class AgentsControllerREST {
 	@PUT
 	@Path("/running/{name}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void runAgent(@PathParam("name") String name, AgentType agentType) {
-		
+	@Produces(MediaType.APPLICATION_JSON)
+	public AID runAgent(@PathParam("name") String name, AgentType agentType) {
+		AID retVal;
+		try {
+			retVal = agentManager.runAgent(name, agentType);
+		} catch(NameExistsException e) {
+			return null;
+		}
+		return retVal;
 	}
 	
 	@DELETE

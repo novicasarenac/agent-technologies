@@ -8,7 +8,11 @@ angular.module('agentsPlayground.AgentsManagementFactory', [])
 		   
 		   factory.getRunningAgents = function() {
 			   return $http.get('/AgentsPlayground/rest/agents/running');
-		   }
+		   };
+		   
+		   factory.runAgent = function(name, type) {
+			   return $http.put('/AgentsPlayground/rest/agents/running/' + name, type);
+		   };
 		   
 		   return factory;
 	   });

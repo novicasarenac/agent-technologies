@@ -8,7 +8,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="list-group" ng-repeat="agentType in agentTypes">
-					  <a class="list-group-item">{{agentType.name}}</a>
+					  <button class="list-group-item" data-toggle="modal" data-target="#myModal" ng-click="selectType(agentType)">{{agentType.name}}</button>
 					</div>
                 </div>
             </div>
@@ -156,5 +156,35 @@
             </div>
         </div>
     </div>
+    
 </div>
+
+<!-- MODAL -->
+    <div class="modal fade" id="myModal" role="dialog">
+    	<div class="modal-dialog">
+    		<div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal">&times;</button>
+		          	<h4 class="modal-title">Run agent</h4>
+		    	</div>
+		    	<div class="modal-body">
+		          	<div class="form-group">
+	                    <label class="control-label">
+	                        Enter name:
+	                    </label>
+	                    <div class="input-wrap">
+	                        <input type="text" class="form-control" ng-model="newAgentName">
+	                    </div>
+	                </div>
+		        </div>
+		        <div class="modal-footer">
+		          	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		          	<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="runAgent(newAgentName)">Run</button>
+		        </div>
+		    </div>	
+    	</div>
+    </div>
+
 </div>
+
+

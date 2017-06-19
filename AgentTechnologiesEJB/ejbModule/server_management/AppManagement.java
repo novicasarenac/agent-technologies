@@ -153,6 +153,11 @@ public class AppManagement implements AppManagementLocal{
 	public String getLocalAlias() {
 		return localAlias;
 	}
+	
+	@Override
+	public String getLocal() {
+		return local;
+	}
 
 	@Lock(LockType.READ)
 	public boolean isListenerStarted() {

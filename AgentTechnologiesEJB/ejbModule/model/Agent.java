@@ -2,7 +2,7 @@ package model;
 
 import java.io.Serializable;
 
-public abstract class Agent implements AgentRemote {
+public abstract class Agent implements AgentLocal {
 	
 	private AID id;
 	

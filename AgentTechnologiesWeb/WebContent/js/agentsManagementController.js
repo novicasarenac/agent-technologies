@@ -5,6 +5,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   
 		   $scope.agentTypes = [];
 		   $scope.runningAgents = [];
+		   $scope.selectedType = {};
 		   function initREST() {
 			   AgentsManagementFactory.getAgentTypes().success(function(data) {
 				   $scope.agentTypes = data;
@@ -15,6 +16,17 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   });
 		   } 
 		   initREST();
+		   
+		   $scope.runAgent = function(name) {
+			   AgentsManagementFactory.runAgent(name, $scope.selectedType).success(function(data) {
+				   if(data != null)
+					   $scope.runningAgents.push(data);
+			   });
+		   }
+		   
+		   $scope.selectType = function(type) {
+			   $scope.selectedType = type;
+		   }
 		   
 		   try {
 			   socket = new WebSocket(host);

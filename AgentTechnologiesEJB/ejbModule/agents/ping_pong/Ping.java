@@ -1,14 +1,14 @@
 package agents.ping_pong;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 import javax.ejb.Stateful;
 
 import model.ACLMessage;
 import model.Agent;
-import model.AgentRemote;
+import model.AgentLocal;
 
 @Stateful
-@Remote(AgentRemote.class)
+@Local(AgentLocal.class)
 public class Ping extends Agent {
 
 	@Override
