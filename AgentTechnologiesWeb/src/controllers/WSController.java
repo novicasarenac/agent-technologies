@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.ejb.Stateless;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.resource.spi.Activation;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -13,11 +20,21 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import agents.AgentManagerLocal;
+import exceptions.NameExistsException;
+import model.AID;
 import utils.WSMessage;
-import utils.WSMessageType;
 
+@MessageDriven(activationConfig = {
+		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/notificationListener"),
+		@ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "300000")
+})
 @ServerEndpoint("/agentRequest")
-public class WSController {
+public class WSController implements MessageListener {
+	
+	@EJB
+	AgentManagerLocal agentManager;
 
 	List<Session> sessions = new ArrayList<>();
 	
@@ -35,7 +52,11 @@ public class WSController {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
 				wsMessage = mapper.readValue(message, WSMessage.class);
-				System.out.println("PORUKA: " + wsMessage.toString());
+				try {
+					AID aid = agentManager.runAgent(wsMessage.getName(), wsMessage.getNewAgentType());
+				} catch (NameExistsException e) {
+					e.printStackTrace();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -50,5 +71,11 @@ public class WSController {
 	@OnError
 	public void onError(Session session, Throwable t) {
 		sessions.remove(session);
+	}
+
+	//notification listener
+	@Override
+	public void onMessage(Message arg0) {
+		
 	}
 }
