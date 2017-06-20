@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.naming.Context;
@@ -13,6 +14,7 @@ import javax.naming.NamingException;
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
 import beans.AgentsRequesterLocal;
+import beans.ClientNotificationsRequesterLocal;
 import exceptions.NameExistsException;
 import model.AID;
 import model.AgentCenter;
@@ -37,6 +39,9 @@ public class AgentManager implements AgentManagerLocal {
 	@EJB
 	AgentsRequesterLocal agentsRequester;
 	
+	@EJB
+	ClientNotificationsRequesterLocal clientNotificationRequester;
+	
 	@PostConstruct
 	public void init() {
 		localAgents = new HashMap<>();
@@ -58,6 +63,7 @@ public class AgentManager implements AgentManagerLocal {
 				System.out.println("Agent " + agent.getId().getName() + " started!");
 				agentsManagement.addRunningAgent(name, agent.getId());
 				sendRunningAgentNotification(agent.getId());
+				clientNotificationRequester.sendNewRunningAgentNotification(agent.getId());
 				return agent.getId();
 			} catch (NamingException e) {
 				e.printStackTrace();

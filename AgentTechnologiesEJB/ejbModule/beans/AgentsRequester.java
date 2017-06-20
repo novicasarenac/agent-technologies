@@ -1,7 +1,13 @@
 package beans;
 
 import javax.ejb.Stateless;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.zeromq.ZMQ;
 
 import model.AID;
@@ -18,28 +24,12 @@ public class AgentsRequester implements AgentsRequesterLocal {
 	
 	@Override
 	public boolean sendRunAgentRequest(AgentCenter agentCenter, String name, AgentType agentType) {
-		ZMQ.Context context = ZMQ.context(1);
-		
-		ZMQ.Socket requester = context.socket(ZMQ.REQ);
-		String centerPort =  (agentCenter.getAddress().split(":"))[1];
-		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 2;
-		String url = "tcp://localhost:" + port;
-		System.out.println("SENDING TO: " + url);
-		requester.connect(url);
-		
-		AgentsCommunicationMessage message = new AgentsCommunicationMessage(name, agentType, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
-		String jsonObject = JSONConverter.convertAgentCommunicationMessageToJSON(message);
-		requester.send(jsonObject, 0);
-		
-		String reply = requester.recvStr(0);
-		AgentsCommunicationMessage response;
-		if(reply != null)
-			response = JSONConverter.convertAgentCommunicationMessageFromJSON(reply);
-		else response = null;
-		
-		requester.close();
-		context.term();
-		return response.isStatus();
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		Response response = null;
+		ResteasyWebTarget target = client.target("http://" + agentCenter.getAddress() + "/AgentsPlayground/rest/agents/running/" + name);
+		response = target.request(MediaType.APPLICATION_JSON).put(Entity.entity(agentType, MediaType.APPLICATION_JSON));
+		AID aid = response.readEntity(AID.class);
+		return true;
 	}
 	
 	@Override

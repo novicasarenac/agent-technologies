@@ -50,4 +50,26 @@ public class JSONConverter {
 		return agentsCommunicationMessage;
 	}
 	
+	public static String convertWSMessageToJSON(WSMessage message) {
+		String jsonMessage = "";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			jsonMessage = mapper.writeValueAsString(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return jsonMessage;
+	}
+	
+	public static WSMessage convertWSMessageFromJSON(String message) {
+		WSMessage wsMessage = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			wsMessage = mapper.readValue(message, WSMessage.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return wsMessage;
+	}
+	
 }

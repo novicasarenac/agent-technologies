@@ -11,6 +11,7 @@ import org.zeromq.ZMQ;
 
 import agents.AgentManagerLocal;
 import beans.AgentsManagementLocal;
+import beans.ClientNotificationsRequesterLocal;
 import model.AID;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
@@ -33,6 +34,9 @@ public class AgentsCommunicationController implements MessageListener {
 	
 	@EJB
 	AgentsManagementLocal agentsManagement;
+	
+	@EJB
+	ClientNotificationsRequesterLocal clientNotificationRequester;
 	
 	@Override
 	public void onMessage(Message arg0) {
@@ -64,20 +68,15 @@ public class AgentsCommunicationController implements MessageListener {
 			String jsonReply = JSONConverter.convertAgentCommunicationMessageToJSON(response);
 			
 			responder.send(jsonReply, 0);
+			
+			if(message.getAgentsCommunicationMessageType() == AgentsCommunicationMessageType.ADD_RUNNING_AGENT)
+				clientNotificationRequester.sendNewRunningAgentNotification(message.getAid());
 		}
 	}
 	
 	public AgentsCommunicationMessage processMessage(AgentsCommunicationMessage message) throws Exception {
 		AgentsCommunicationMessage response = null;
 		switch(message.getAgentsCommunicationMessageType()) {
-			case RUN_AGENT: {
-				AID retVal = agentManager.runAgent(message.getName(), message.getAgentType());
-				if(retVal != null) {
-					response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.RUN_AGENT, true);
-				} else {
-					response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.RUN_AGENT, false);
-				}
-			}
 			case ADD_RUNNING_AGENT: {
 				agentsManagement.addRunningAgent(message.getAid().getName(), message.getAid());
 				response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.ADD_RUNNING_AGENT, true);

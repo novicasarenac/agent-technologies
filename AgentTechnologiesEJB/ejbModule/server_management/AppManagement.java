@@ -1,7 +1,8 @@
 package server_management;
 
-import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -15,8 +16,8 @@ import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSContext;
 import javax.jms.JMSProducer;
+import javax.websocket.Session;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
@@ -40,6 +41,8 @@ public class AppManagement implements AppManagementLocal {
 	private boolean listenerStarted;
 	private boolean heartbeatListenerStarted;
 	private boolean agentsCommunicationListenerStarted;
+	private boolean clientNotificationListenerStarted;
+	List<Session> clientSessions = new ArrayList<>();
 	
 	@EJB
 	AgentCentersManagementLocal agentCentersManagement;
@@ -64,6 +67,9 @@ public class AppManagement implements AppManagementLocal {
 	
 	@Resource(mappedName = "java:/jms/queue/agentsCommunicationListener")
 	private Destination destinationAgentsCommunication;
+	
+	@Resource(mappedName = "java:/jms/queue/notificationListener")
+	private Destination notificationListenerDestination;
 	
 	@PostConstruct
 	public void initialize() {
@@ -95,6 +101,7 @@ public class AppManagement implements AppManagementLocal {
 		sendActivationMessage();
 		activateHeartbeatListener();
 		activateAgentsCommunicationListener();
+		activateClientNotificationListener();
 		if(isMaster()) {
 			try {
 				agentCentersManagement.register(new AgentCenter(localAlias, local));
@@ -142,6 +149,12 @@ public class AppManagement implements AppManagementLocal {
 		String message = "Activation";
 		JMSProducer producer = context.createProducer();
 		producer.send(destinationAgentsCommunication, message);
+	}
+	
+	public void activateClientNotificationListener() {
+		String message = "Activation";
+		JMSProducer producer = context.createProducer();
+		producer.send(notificationListenerDestination, message);
 	}
 	
 	@Override
@@ -207,6 +220,35 @@ public class AppManagement implements AppManagementLocal {
 	@Lock(LockType.WRITE)
 	public void setAgentsCommunicationListenerStarted(boolean agentsCommunicationListenerStarted) {
 		this.agentsCommunicationListenerStarted = agentsCommunicationListenerStarted;
+	}
+	
+	@Override
+	public boolean isClientNotificationListenerStarted() {
+		return clientNotificationListenerStarted;
+	}
+
+	@Override
+	public void setClientNotificationListenerStarted(boolean clientNotificationListenerStarted) {
+		this.clientNotificationListenerStarted = clientNotificationListenerStarted;
+	}
+	
+	@Override
+	public void addSession(Session session) {
+		if(!clientSessions.contains(session)) {
+			clientSessions.add(session);
+		}
+	}
+	
+	@Override
+	public void removeSession(Session session) {
+		if(clientSessions.contains(session)) {
+			clientSessions.remove(session);
+		}
+	}
+	
+	@Override
+	public List<Session> getSessions() {
+		return clientSessions;
 	}
 	
 }

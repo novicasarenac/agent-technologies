@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
-import javax.ejb.Stateless;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.resource.spi.Activation;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -19,10 +18,13 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.zeromq.ZMQ;
 
 import agents.AgentManagerLocal;
 import exceptions.NameExistsException;
-import model.AID;
+import server_management.AppManagementLocal;
+import server_management.SystemPropertiesKeys;
+import utils.JSONConverter;
 import utils.WSMessage;
 
 @MessageDriven(activationConfig = {
@@ -35,47 +37,101 @@ public class WSController implements MessageListener {
 	
 	@EJB
 	AgentManagerLocal agentManager;
-
-	List<Session> sessions = new ArrayList<>();
 	
+	@EJB
+	AppManagementLocal appManagement;
+
 	@OnOpen
 	public void onOpen(Session session) {
-		if(!sessions.contains(session)) {
-			sessions.add(session);
-		}
+		appManagement.addSession(session);
 	}
 	
 	@OnMessage
 	public void onMessage(Session session, String message, boolean last) {
+		System.out.println("STIGLAAAAAA");
 		WSMessage wsMessage = null;
 		if(session.isOpen()) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
 				wsMessage = mapper.readValue(message, WSMessage.class);
-				try {
-					AID aid = agentManager.runAgent(wsMessage.getName(), wsMessage.getNewAgentType());
-				} catch (NameExistsException e) {
-					e.printStackTrace();
-				}
+				processMessage(wsMessage);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
+	public void processMessage(WSMessage message) {
+		switch(message.getMessageType()) {
+			case RUN_AGENT: {
+				try {
+					agentManager.runAgent(message.getName(), message.getNewAgentType());
+				} catch (NameExistsException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void processNotification(WSMessage message) {
+		switch (message.getMessageType()) {
+			case ADD_RUNNING_AGENT: {
+				String jsonObject;
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					jsonObject = mapper.writeValueAsString(message);
+					for(Session s : appManagement.getSessions()) {
+						s.getBasicRemote().sendText(jsonObject);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+		}
+	}
+	
 	@OnClose
 	public void onClose(Session session) {
-		sessions.remove(session);
+		appManagement.removeSession(session);
 	}
 	
 	@OnError
 	public void onError(Session session, Throwable t) {
-		sessions.remove(session);
+		appManagement.removeSession(session);
 	}
 
 	//notification listener
 	@Override
 	public void onMessage(Message arg0) {
+		if(!appManagement.isClientNotificationListenerStarted()) {
+			try {
+				listen();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Asynchronous
+	public void listen() throws Exception {
+		appManagement.setClientNotificationListenerStarted(true);
+		ZMQ.Context context = ZMQ.context(1);
 		
+		ZMQ.Socket responder = context.socket(ZMQ.REP);
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(appManagement.getPortOffset()) + 3;
+		String url = "tcp://*:" + port;
+		System.out.println("URL RECEIVER: " + url);
+		responder.bind(url);
+		
+		while(!Thread.currentThread().isInterrupted()) {
+			String request = responder.recvStr(0);
+			WSMessage message = JSONConverter.convertWSMessageFromJSON(request);
+			
+			String reply = "Response";
+			
+			responder.send(reply, 0);
+			processNotification(message);
+		}
 	}
 }

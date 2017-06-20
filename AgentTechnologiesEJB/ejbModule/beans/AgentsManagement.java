@@ -24,6 +24,9 @@ public class AgentsManagement implements AgentsManagementLocal {
 	@EJB
 	AppManagementLocal appManagement;
 	
+	@EJB
+	ClientNotificationsRequesterLocal clientNotificationRequester;
+	
 	private Map<String, List<AgentType>> allTypes = new HashMap<>();
 	private List<AgentType> supportedTypes = new ArrayList<>();
 	

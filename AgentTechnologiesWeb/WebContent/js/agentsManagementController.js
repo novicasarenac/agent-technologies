@@ -10,8 +10,15 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				   console.log('Socket connection opened!');
 			   }
 			   
-			   socket.onmessage = function(message) {
-				   console.log(message);
+			   socket.onmessage = function(messageString) {
+				   var message = JSON.parse(messageString.data);
+				   switch(message.messageType) {
+				    	case 'ADD_RUNNING_AGENT':
+				    		$scope.$apply(function() {
+				    			$scope.runningAgents.push(message.aid);
+				    		})
+				    		break;
+				   }
 			   }
 			   
 			   socket.onclose = function() {
@@ -46,8 +53,8 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   
 		   var runAgentREST = function(name) {
 			   AgentsManagementFactory.runAgent(name, $scope.selectedType).success(function(data) {
-				   if(data != null)
-					   $scope.runningAgents.push(data);
+				   if(data == null)
+					   console.log('Error!');
 			   });
 		   }
 		   
