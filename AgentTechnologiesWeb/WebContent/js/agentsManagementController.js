@@ -143,6 +143,61 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   }
 		   }
 		   
+		   $scope.sendACLMessage = function(message) {
+			   var sender = {};
+			   var receivers = [];
+			   var replyTo = {};
+			   var selectedTemp = [];
+			   for(var k = 0; k < $scope.selected.length; k++) {
+				   for(var s = 0; s < $scope.runningAgentsNames.length; s++) {
+					   if($scope.runningAgentsNames[s].id == $scope.selected[k].id)
+						   selectedTemp.push($scope.runningAgentsNames[s].label);
+				   }
+			   }
+			   
+			   for(var i = 0; i < $scope.runningAgents.length; i++) {
+				   if($scope.runningAgents[i].name == message.sender)
+					   sender = $scope.runningAgents[i];
+				   if($scope.runningAgents[i].name == message.replyTo)
+					   replyTo = $scope.runningAgents[i];
+				   for(var j = 0; j < selectedTemp.length; j++) {
+					   if($scope.runningAgents[i].name == selectedTemp[j])
+						   receivers.push($scope.runningAgents[i]);
+				   }
+			   }
+			   
+			   var aclMessage = {
+					   'performative': message.performative,
+					   'sender': sender,
+					   'receivers': receivers,
+					   'replyTo': replyTo,
+					   'content': message.content,
+					   'contentObj': null,
+					   'userArgs': null,
+					   'language': message.language,
+					   'encoding': message.encoding,
+					   'ontology': message.ontology,
+					   'protocol': message.protocol,
+					   'conversationId': message.conversationId,
+					   'replyWith': message.replyWith,
+					   'inReplyTo': null,
+					   'replyBy': message.replyBy
+			   };
+			    if($scope.communicationType == 'REST')
+				   sendMessageREST(aclMessage);
+			   else
+				   sendMessageWS(aclMessage);
+		   }
+		   
+		   var sendMessageREST = function(aclMessage) {
+			   AgentsManagementFactory.sendMessage(aclMessage).success(function(data) {
+			   });
+		   }
+		   
+		   var sendMessageWS = function(aclMessage) {
+			   
+		   }
+		   
 		   $scope.selectType = function(type) {
 			   $scope.selectedType = type;
 		   }

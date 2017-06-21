@@ -20,7 +20,11 @@ angular.module('agentsPlayground.AgentsManagementFactory', [])
 		   
 		   factory.getPerformatives = function() {
 			   return $http.get('/AgentsPlayground/rest/messages');
-		   }
+		   };
+		   
+		   factory.sendMessage = function(aclMessage) {
+			   return $http.post('/AgentsPlayground/rest/messages', aclMessage);
+		   };
 		   
 		   return factory;
 	   });
