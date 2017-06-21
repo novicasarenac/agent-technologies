@@ -11,5 +11,6 @@ public interface AgentsRequesterLocal {
 
 	public boolean sendRunAgentRequest(AgentCenter agentCenter, String name, AgentType agentType);
 	public boolean sendNewRunningAgent(AgentCenter agentCenter, AID aid);
+	public void sendStoppedAgentMessage(AgentCenter agentCenter, String name);
 	
 }

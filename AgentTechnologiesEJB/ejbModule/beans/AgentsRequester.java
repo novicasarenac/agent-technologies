@@ -58,4 +58,29 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		return response.isStatus();
 	}
 
+	@Override
+	public void sendStoppedAgentMessage(AgentCenter agentCenter, String name) {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (agentCenter.getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 2;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		AgentsCommunicationMessage message = new AgentsCommunicationMessage(name, null, null, null, AgentsCommunicationMessageType.REMOVE_STOPPED_AGENT, true);
+		String jsonObject = JSONConverter.convertAgentCommunicationMessageToJSON(message);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		AgentsCommunicationMessage response;
+		if(reply != null)
+			response = JSONConverter.convertAgentCommunicationMessageFromJSON(reply);
+		else response = null;
+		
+		requester.close();
+		context.term();
+	}
+
 }

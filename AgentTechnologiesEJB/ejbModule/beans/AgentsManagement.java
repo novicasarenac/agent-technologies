@@ -80,6 +80,16 @@ public class AgentsManagement implements AgentsManagementLocal {
 	}
 	
 	@Override
+	public AID removeRunningAgent(String name) {
+		AID retVal = null;
+		if(runningAgents.containsKey(name)) {
+			retVal = runningAgents.remove(name);
+			System.out.println("Agent " + name + " stopped!");
+		}
+		return retVal;
+	}
+	
+	@Override
 	@Lock(LockType.WRITE)
 	public void removeRunningAgents(AgentCenter agentCenter) {
 		List<String> agentsToRemove = new ArrayList<>();

@@ -89,7 +89,16 @@ public class AgentManager implements AgentManagerLocal {
 
 	@Override
 	public void stopAgent(String name) {
-		
+		AID aid = agentsManagement.getRunningAgents().get(name);
+		if(aid.getHost().getAlias().equals(appManagement.getLocalAlias())) {
+			localAgents.remove(name);
+			System.out.println("Agent " + name + " stopped at this node.");
+			agentsManagement.removeRunningAgent(name);
+			sendStopNotification(name);
+			clientNotificationRequester.sendStopAgentNotification(aid);
+		} else {
+			//agentsRequester.sendStopAgentRequest(name);
+		}
 	}
 
 	@Override
@@ -102,6 +111,15 @@ public class AgentManager implements AgentManagerLocal {
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
 				agentsRequester.sendNewRunningAgent(agentCenter, aid);
+			}
+		}
+	}
+	
+	@Override
+	public void sendStopNotification(String name) {
+		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
+			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
+				agentsRequester.sendStoppedAgentMessage(agentCenter, name);
 			}
 		}
 	}

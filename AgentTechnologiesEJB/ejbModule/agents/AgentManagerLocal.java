@@ -16,5 +16,6 @@ public interface AgentManagerLocal {
 	public void stopAgent(String name);
 	public Map<String, AgentLocal> getRunningAgents();
 	public void sendRunningAgentNotification(AID aid);
+	public void sendStopNotification(String name);
 	
 }

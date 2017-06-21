@@ -73,6 +73,6 @@ public class AgentsControllerREST {
 	@DELETE
 	@Path("/running/{name}")
 	public void deleteAgent(@PathParam("name") String name) {
-		
+		agentManager.stopAgent(name);
 	}
 }

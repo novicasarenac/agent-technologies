@@ -19,6 +19,7 @@ public interface AgentsManagementLocal {
 	public Map<String, List<AgentType>> getAllTypes();
 	public Map<String, AID> getRunningAgents();
 	public void removeRunningAgents(AgentCenter agentCenter);
+	public AID removeRunningAgent(String name);
 	public boolean addRunningAgent(String name, AID id);
 	
 }

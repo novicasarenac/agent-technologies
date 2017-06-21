@@ -14,6 +14,10 @@ angular.module('agentsPlayground.AgentsManagementFactory', [])
 			   return $http.put('/AgentsPlayground/rest/agents/running/' + name, type);
 		   };
 		   
+		   factory.stopAgent = function(name) {
+			   return $http.delete('/AgentsPlayground/rest/agents/running/' + name);
+		   };
+		   
 		   return factory;
 	   });
 	   

@@ -29,6 +29,12 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    			$scope.agentTypes = message.agentTypes;
 				    		})
 				    		break;
+				    	case 'REMOVE_STOPPED_AGENT':
+				    		var temp = $scope.runningAgents.filter(running => running.name != message.aid.name);
+				    		$scope.$apply(function() {
+				    			$scope.runningAgents = temp;
+				    		})
+				    		break;
 				   }
 			   }
 			   
@@ -85,6 +91,23 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   } catch(exception) {
 				   console.log('Error!');
 			   }
+		   }
+		   
+		   $scope.stopAgent = function(agent) {
+			   if($scope.communicationType == 'REST')
+				   stopAgentREST(agent.name);
+			   else
+				   stopAgentWS(agent.name);
+		   }
+		   
+		   var stopAgentREST = function(name) {
+			   AgentsManagementFactory.stopAgent(name).success(function(data) {
+				   
+			   })
+		   }
+		   
+		   var stopAgentWS = function(name) {
+			   
 		   }
 		   
 		   $scope.selectType = function(type) {

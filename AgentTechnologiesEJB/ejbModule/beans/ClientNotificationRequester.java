@@ -45,6 +45,27 @@ public class ClientNotificationRequester implements ClientNotificationsRequester
 		requester.close();
 		context.term();
 	}
+	
+	@Override
+	public void sendStopAgentNotification(AID aid) {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (appManagement.getLocal().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 3;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+
+		WSMessage wsMessage = new WSMessage(null, null, aid, null, null, null, WSMessageType.REMOVE_STOPPED_AGENT);
+		String jsonObject = JSONConverter.convertWSMessageToJSON(wsMessage);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		
+		requester.close();
+		context.term();
+	}
 
 	@Override
 	public void sendShutdownNodeNotification() {

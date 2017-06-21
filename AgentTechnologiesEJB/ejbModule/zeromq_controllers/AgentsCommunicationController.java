@@ -71,6 +71,9 @@ public class AgentsCommunicationController implements MessageListener {
 			
 			if(message.getAgentsCommunicationMessageType() == AgentsCommunicationMessageType.ADD_RUNNING_AGENT)
 				clientNotificationRequester.sendNewRunningAgentNotification(message.getAid());
+			if(message.getAgentsCommunicationMessageType() == AgentsCommunicationMessageType.REMOVE_STOPPED_AGENT) {
+				clientNotificationRequester.sendStopAgentNotification(response.getAid());
+			}
 		}
 	}
 	
@@ -80,6 +83,13 @@ public class AgentsCommunicationController implements MessageListener {
 			case ADD_RUNNING_AGENT: {
 				agentsManagement.addRunningAgent(message.getAid().getName(), message.getAid());
 				response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.ADD_RUNNING_AGENT, true);
+				break;
+			}
+			case REMOVE_STOPPED_AGENT: {
+				AID aid = agentsManagement.getRunningAgents().get(message.getName());
+				agentsManagement.removeRunningAgent(message.getName());
+				response = new AgentsCommunicationMessage(null, null, null, aid, AgentsCommunicationMessageType.REMOVE_STOPPED_AGENT, true);
+				break;
 			}
 		}
 		return response;
