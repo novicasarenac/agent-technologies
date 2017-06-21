@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -27,7 +28,7 @@ public class MessagesControllerREST {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Performative> getPerformatives() {
-		List<Performative> retVal = new ArrayList<>();
+		List<Performative> retVal = Arrays.asList(Performative.values());
 		
 		return retVal;		
 	}

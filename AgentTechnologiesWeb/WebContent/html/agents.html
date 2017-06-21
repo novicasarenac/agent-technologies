@@ -65,7 +65,8 @@
 	                    </label>
 	                    <div class="input-wrap">
 	                        <select id="performative" class="form-control">
-	                            <option value="">---</option>
+	                        	<option selected>---</option>
+	                            <option ng-repeat="performative in performatives">{{performative}}</option>
 	                        </select>
 	                    </div>
 	                </div>
@@ -75,7 +76,8 @@
 	                    </label>
 	                    <div class="input-wrap">
 	                        <select id="sender" class="form-control">
-	                            <option value="">---</option>
+	                        	<option selected>---</option>
+	                            <option ng-repeat="sender in runningAgents">{{sender.name}}</option>
 	                        </select>
 	                    </div>
 	                </div>
@@ -85,7 +87,8 @@
 	                    </label>
 	                    <div class="input-wrap">
 	                        <select id="receiver" class="form-control">
-	                            <option value="">---</option>
+	                        	<option selected>---</option>
+	                            <option ng-repeat="receiver in runningAgents">{{receiver.name}}</option>
 	                        </select>
 	                    </div>
 	                </div>
@@ -95,7 +98,8 @@
 	                    </label>
 	                    <div class="input-wrap">
 	                        <select id="replyTo" class="form-control">
-	                            <option value="">---</option>
+	                        	<option selected>---</option>
+	                            <option ng-repeat="replyTo in runningAgents">{{replyTo.name}}</option>
 	                        </select>
 	                    </div>
 	                </div>

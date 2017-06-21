@@ -18,6 +18,10 @@ angular.module('agentsPlayground.AgentsManagementFactory', [])
 			   return $http.delete('/AgentsPlayground/rest/agents/running/' + name);
 		   };
 		   
+		   factory.getPerformatives = function() {
+			   return $http.get('/AgentsPlayground/rest/messages');
+		   }
+		   
 		   return factory;
 	   });
 	   

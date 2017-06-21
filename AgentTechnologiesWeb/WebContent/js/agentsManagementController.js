@@ -48,6 +48,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   
 		   $scope.agentTypes = [];
 		   $scope.runningAgents = [];
+		   $scope.performatives = [];
 		   $scope.selectedType = {};
 		   $scope.communicationType = 'REST';
 		   function initREST() {
@@ -57,6 +58,10 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   
 			   AgentsManagementFactory.getRunningAgents().success(function(data) {
 				   $scope.runningAgents = data;
+			   });
+			   
+			   AgentsManagementFactory.getPerformatives().success(function(data) {
+				   $scope.performatives = data;
 			   });
 		   } 
 		   initREST();
