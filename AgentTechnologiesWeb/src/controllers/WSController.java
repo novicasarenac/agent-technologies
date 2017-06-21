@@ -70,6 +70,10 @@ public class WSController implements MessageListener {
 				}
 				break;
 			}
+			case STOP_AGENT: {
+				agentManager.stopAgent(message.getName());
+				break;
+			}
 		}
 	}
 	

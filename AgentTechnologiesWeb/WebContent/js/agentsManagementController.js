@@ -102,12 +102,25 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   
 		   var stopAgentREST = function(name) {
 			   AgentsManagementFactory.stopAgent(name).success(function(data) {
-				   
-			   })
+			   });
 		   }
 		   
 		   var stopAgentWS = function(name) {
+			   var message = {
+					   'name' : name,
+					   'newAgentType' : null,
+					   'aid' : null,
+					   'agentTypes' : null,
+					   'aclMessage' : null,
+					   'messageType' : 'STOP_AGENT'
+			   };
 			   
+			   try {
+				   var messageJSON = angular.toJson(message);
+				   socket.send(messageJSON);
+			   } catch(exception) {
+				   console.log('Error!');
+			   }
 		   }
 		   
 		   $scope.selectType = function(type) {
