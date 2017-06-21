@@ -10,6 +10,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.zeromq.ZMQ;
 
+import model.ACLMessage;
 import model.AID;
 import model.AgentCenter;
 import model.AgentType;
@@ -88,6 +89,11 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		
 		requester.close();
 		context.term();
+	}
+	
+	@Override
+	public void sendACLMessage(AID receiver, ACLMessage message) {
+		
 	}
 
 }

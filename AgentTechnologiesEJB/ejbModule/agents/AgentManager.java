@@ -16,6 +16,7 @@ import beans.AgentsManagementLocal;
 import beans.AgentsRequesterLocal;
 import beans.ClientNotificationsRequesterLocal;
 import exceptions.NameExistsException;
+import model.ACLMessage;
 import model.AID;
 import model.AgentCenter;
 import model.AgentLocal;
@@ -99,6 +100,11 @@ public class AgentManager implements AgentManagerLocal {
 		} else {
 			agentsRequester.sendStopAgentRequest(aid.getHost(), name);
 		}
+	}
+	
+	@Override
+	public void deliverMessageToAgent(AID agent, ACLMessage message) {
+		localAgents.get(agent.getName()).handleMessage(message);
 	}
 
 	@Override

@@ -1,1 +1,1 @@
-var app = angular.module('agentsPlayground', ['agentsPlayground.routes', 'agentsPlayground.controllers', 'agentsPlayground.factories']);
+var app = angular.module('agentsPlayground', ['angularjs-dropdown-multiselect','agentsPlayground.routes', 'agentsPlayground.controllers', 'agentsPlayground.factories']);

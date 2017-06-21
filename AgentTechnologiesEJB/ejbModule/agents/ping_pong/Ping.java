@@ -13,7 +13,7 @@ public class Ping extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage message) {
-		
+		System.out.println("STIGLA PORUKA OD: " + message.getSender().getName());
 	}
 
 }

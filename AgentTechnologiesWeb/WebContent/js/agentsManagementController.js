@@ -16,12 +16,14 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    	case 'ADD_RUNNING_AGENT':
 				    		$scope.$apply(function() {
 				    			$scope.runningAgents.push(message.aid);
+				    			changeRunnigAgentsNames();
 				    		})
 				    		break;
 				    	case 'REMOVED_NODE':
 				    		$scope.$apply(function() {
 				    			$scope.runningAgents = message.runningAgents;
 				    			$scope.agentTypes = message.agentTypes;
+				    			changeRunnigAgentsNames();
 				    		})
 				    		break;
 				    	case 'ADDED_NEW_NODE':
@@ -33,6 +35,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    		var temp = $scope.runningAgents.filter(running => running.name != message.aid.name);
 				    		$scope.$apply(function() {
 				    			$scope.runningAgents = temp;
+				    			changeRunnigAgentsNames();
 				    		})
 				    		break;
 				   }
@@ -49,6 +52,8 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   $scope.agentTypes = [];
 		   $scope.runningAgents = [];
 		   $scope.performatives = [];
+		   $scope.runningAgentsNames = [];
+		   $scope.selected = [];
 		   $scope.selectedType = {};
 		   $scope.communicationType = 'REST';
 		   function initREST() {
@@ -57,7 +62,10 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   });
 			   
 			   AgentsManagementFactory.getRunningAgents().success(function(data) {
-				   $scope.runningAgents = data;
+				  $scope.runningAgents = data;
+				  for(var i = 0; i < $scope.runningAgents.length; i++) {
+					  $scope.runningAgentsNames.push({'id': i+1, 'label': $scope.runningAgents[i].name});
+				  }
 			   });
 			   
 			   AgentsManagementFactory.getPerformatives().success(function(data) {
@@ -65,6 +73,13 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   });
 		   } 
 		   initREST();
+		   
+		   var changeRunnigAgentsNames = function() {
+			   $scope.runningAgentsNames = [];
+			   for(var i = 0; i < $scope.runningAgents.length; i++) {
+				  $scope.runningAgentsNames.push({'id': i+1, 'label': $scope.runningAgents[i].name});
+			   }
+		   }
 		   
 		   $scope.runAgent = function(name) {
 			   if($scope.communicationType == 'REST')

@@ -2,6 +2,7 @@ package beans;
 
 import javax.ejb.Local;
 
+import model.ACLMessage;
 import model.AID;
 import model.AgentCenter;
 import model.AgentType;
@@ -13,5 +14,6 @@ public interface AgentsRequesterLocal {
 	public void sendStopAgentRequest(AgentCenter agentCenter, String name);
 	public boolean sendNewRunningAgent(AgentCenter agentCenter, AID aid);
 	public void sendStoppedAgentMessage(AgentCenter agentCenter, String name);
+	public void sendACLMessage(AID receiver, ACLMessage message);
 	
 }
