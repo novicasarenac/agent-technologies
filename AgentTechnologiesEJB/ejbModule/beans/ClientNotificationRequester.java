@@ -78,4 +78,32 @@ public class ClientNotificationRequester implements ClientNotificationsRequester
 		context.term();
 	}
 	
+	@Override
+	public void sendAddNewNodeNotification() {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (appManagement.getLocal().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 3;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+
+		List<AgentType> agentTypes = new ArrayList<>();
+		for(String key : agentsManagement.getAllTypes().keySet()) {
+			for(AgentType type : agentsManagement.getAllTypes().get(key)) {
+				if(agentTypes.stream().filter(addedType -> addedType.getName().equals(type.getName())).count() == 0)
+					agentTypes.add(type);
+			}
+		}
+		WSMessage wsMessage = new WSMessage(null, null, null, agentTypes, null, null, WSMessageType.ADDED_NEW_NODE);
+		String jsonObject = JSONConverter.convertWSMessageToJSON(wsMessage);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		
+		requester.close();
+		context.term();
+	}
+	
 }

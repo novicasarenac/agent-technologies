@@ -24,6 +24,11 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    			$scope.agentTypes = message.agentTypes;
 				    		})
 				    		break;
+				    	case 'ADDED_NEW_NODE':
+				    		$scope.$apply(function() {
+				    			$scope.agentTypes = message.agentTypes;
+				    		})
+				    		break;
 				   }
 			   }
 			   

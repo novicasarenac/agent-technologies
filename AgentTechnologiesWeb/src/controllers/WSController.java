@@ -100,6 +100,18 @@ public class WSController implements MessageListener {
 					e.printStackTrace();
 				}
 			}
+			case ADDED_NEW_NODE: {
+				String jsonObject;
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					jsonObject = mapper.writeValueAsString(message);
+					for(Session s : appManagement.getSessions()) {
+						s.getBasicRemote().sendText(jsonObject);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

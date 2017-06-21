@@ -9,5 +9,6 @@ public interface ClientNotificationsRequesterLocal {
 
 	public void sendNewRunningAgentNotification(AID aid);
 	public void sendShutdownNodeNotification();
+	public void sendAddNewNodeNotification();
 	
 }

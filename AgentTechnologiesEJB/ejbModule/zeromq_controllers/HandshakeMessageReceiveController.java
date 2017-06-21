@@ -84,6 +84,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 			if(replyMessage.isStatus() && message.getMesssageType() == HandshakeMessageType.POST_NODE && appManagement.isMaster()) {
 				List<AgentType> newAgentTypes = getNewAgentTypes(message.getNewAgentCenter());
 				if(newAgentTypes != null) {
+					clientNotificationsRequester.sendAddNewNodeNotification();
 					boolean next = notifyAllNodes(message.getNewAgentCenter(), newAgentTypes);
 					if(next) {
 						if(!sendDataToNewCenter(message.getNewAgentCenter())) {
@@ -137,6 +138,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 				} catch (Exception e) {
 					retVal.setStatus(false);
 				}
+				clientNotificationsRequester.sendAddNewNodeNotification();
 				break;
 			}
 			
