@@ -48,7 +48,6 @@ public class WSController implements MessageListener {
 	
 	@OnMessage
 	public void onMessage(Session session, String message, boolean last) {
-		System.out.println("STIGLAAAAAA");
 		WSMessage wsMessage = null;
 		if(session.isOpen()) {
 			try {
@@ -69,6 +68,7 @@ public class WSController implements MessageListener {
 				} catch (NameExistsException e) {
 					e.printStackTrace();
 				}
+				break;
 			}
 		}
 	}
@@ -87,6 +87,18 @@ public class WSController implements MessageListener {
 					e.printStackTrace();
 				}
 				break;
+			}
+			case REMOVED_NODE: {
+				String jsonObject;
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					jsonObject = mapper.writeValueAsString(message);
+					for(Session s : appManagement.getSessions()) {
+						s.getBasicRemote().sendText(jsonObject);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

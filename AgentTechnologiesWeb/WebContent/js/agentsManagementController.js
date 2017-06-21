@@ -18,6 +18,12 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    			$scope.runningAgents.push(message.aid);
 				    		})
 				    		break;
+				    	case 'REMOVED_NODE':
+				    		$scope.$apply(function() {
+				    			$scope.runningAgents = message.runningAgents;
+				    			$scope.agentTypes = message.agentTypes;
+				    		})
+				    		break;
 				   }
 			   }
 			   

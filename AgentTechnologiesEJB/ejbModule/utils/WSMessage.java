@@ -14,6 +14,7 @@ public class WSMessage implements Serializable {
 	private AID aid;
 	private List<AgentType> agentTypes;
 	private ACLMessage aclMessage;
+	private List<AID> runningAgents;
 	private WSMessageType messageType;
 
 	public WSMessage() {
@@ -22,13 +23,14 @@ public class WSMessage implements Serializable {
 	}
 
 	public WSMessage(String name, AgentType newAgentType, AID aid, List<AgentType> agentTypes, ACLMessage aclMessage,
-			WSMessageType messageType) {
+			List<AID> runningAgents, WSMessageType messageType) {
 		super();
 		this.name = name;
 		this.newAgentType = newAgentType;
 		this.aid = aid;
 		this.agentTypes = agentTypes;
 		this.aclMessage = aclMessage;
+		this.runningAgents = runningAgents;
 		this.messageType = messageType;
 	}
 
@@ -70,6 +72,14 @@ public class WSMessage implements Serializable {
 
 	public void setAclMessage(ACLMessage aclMessage) {
 		this.aclMessage = aclMessage;
+	}
+
+	public List<AID> getRunningAgents() {
+		return runningAgents;
+	}
+
+	public void setRunningAgents(List<AID> runningAgents) {
+		this.runningAgents = runningAgents;
 	}
 
 	public WSMessageType getMessageType() {

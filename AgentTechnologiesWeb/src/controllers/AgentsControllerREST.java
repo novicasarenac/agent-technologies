@@ -37,8 +37,10 @@ public class AgentsControllerREST {
 	public List<AgentType> getAgentClasses() {
 		List<AgentType> retVal = new ArrayList<>();
 		for(String key : agentsManagement.getAllTypes().keySet()) {
-			List<AgentType> temp = agentsManagement.getAllTypes().get(key).stream().filter(type -> !retVal.contains(type)).collect(Collectors.toList());
-			retVal.addAll(temp);
+			for(AgentType type : agentsManagement.getAllTypes().get(key)) {
+				if(retVal.stream().filter(addedType -> addedType.getName().equals(type.getName())).count() == 0)
+					retVal.add(type);
+			}
 		}
 		return retVal;
 	}

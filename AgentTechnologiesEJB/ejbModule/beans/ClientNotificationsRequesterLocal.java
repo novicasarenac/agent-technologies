@@ -8,5 +8,6 @@ import model.AID;
 public interface ClientNotificationsRequesterLocal {
 
 	public void sendNewRunningAgentNotification(AID aid);
+	public void sendShutdownNodeNotification();
 	
 }

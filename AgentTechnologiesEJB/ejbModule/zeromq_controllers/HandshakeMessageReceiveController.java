@@ -14,6 +14,7 @@ import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
+import beans.ClientNotificationsRequesterLocal;
 import beans.HandshakeRequesterLocal;
 import beans.ShutdownRequesterLocal;
 import exceptions.AliasExistsException;
@@ -47,6 +48,9 @@ public class HandshakeMessageReceiveController implements MessageListener {
 	
 	@EJB
 	ShutdownRequesterLocal shutdownRequester;
+	
+	@EJB
+	ClientNotificationsRequesterLocal clientNotificationsRequester;
 	
 	@Override
 	public void onMessage(Message arg0) {
@@ -166,6 +170,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 				agentCentersManagement.removeCenter(message.getNewAgentCenter());
 				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
 				agentsManagement.removeRunningAgents(message.getNewAgentCenter());
+				clientNotificationsRequester.sendShutdownNodeNotification();
 				
 				retVal.setStatus(true);
 				break;
