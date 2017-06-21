@@ -21,7 +21,6 @@ import utils.JSONConverter;
 @Stateless
 public class AgentsRequester implements AgentsRequesterLocal {
 	
-	
 	@Override
 	public boolean sendRunAgentRequest(AgentCenter agentCenter, String name, AgentType agentType) {
 		ResteasyClient client = new ResteasyClientBuilder().build();
@@ -30,6 +29,14 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		response = target.request(MediaType.APPLICATION_JSON).put(Entity.entity(agentType, MediaType.APPLICATION_JSON));
 		AID aid = response.readEntity(AID.class);
 		return true;
+	}
+	
+	@Override
+	public void sendStopAgentRequest(AgentCenter agentCenter, String name) {
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		Response response = null;
+		ResteasyWebTarget target = client.target("http://" + agentCenter.getAddress() + "/AgentsPlayground/rest/agents/running/" + name);
+		response = target.request().delete();
 	}
 	
 	@Override

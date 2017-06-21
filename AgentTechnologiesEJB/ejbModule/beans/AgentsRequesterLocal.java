@@ -10,6 +10,7 @@ import model.AgentType;
 public interface AgentsRequesterLocal {
 
 	public boolean sendRunAgentRequest(AgentCenter agentCenter, String name, AgentType agentType);
+	public void sendStopAgentRequest(AgentCenter agentCenter, String name);
 	public boolean sendNewRunningAgent(AgentCenter agentCenter, AID aid);
 	public void sendStoppedAgentMessage(AgentCenter agentCenter, String name);
 	

@@ -97,7 +97,7 @@ public class AgentManager implements AgentManagerLocal {
 			sendStopNotification(name);
 			clientNotificationRequester.sendStopAgentNotification(aid);
 		} else {
-			//agentsRequester.sendStopAgentRequest(name);
+			agentsRequester.sendStopAgentRequest(aid.getHost(), name);
 		}
 	}
 
