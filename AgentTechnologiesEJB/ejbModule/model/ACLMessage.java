@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class ACLMessage implements Serializable {
 
 	public ACLMessage() {
 		super();
-		// TODO Auto-generated constructor stub
+		receivers = new ArrayList<>();
+		userArgs = new HashMap<>();
 	}
 
 	public ACLMessage(Performative performative, AID sender, List<AID> receivers, AID replyTo, String content,
