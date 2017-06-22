@@ -18,6 +18,7 @@ import server_management.SystemPropertiesKeys;
 import utils.AgentsCommunicationMessage;
 import utils.AgentsCommunicationMessageType;
 import utils.JSONConverter;
+import utils.MessageToDeliver;
 
 @Stateless
 public class AgentsRequester implements AgentsRequesterLocal {
@@ -38,6 +39,14 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		Response response = null;
 		ResteasyWebTarget target = client.target("http://" + agentCenter.getAddress() + "/AgentsPlayground/rest/agents/running/" + name);
 		response = target.request().delete();
+	}
+	
+	@Override
+	public void sendACLMessage(AID receiver, ACLMessage message) {
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		Response response = null;
+		ResteasyWebTarget target = client.target("http://" + receiver.getHost().getAddress() + "/AgentsPlayground/rest/messages/sendToAgent");
+		response = target.request().post(Entity.entity(new MessageToDeliver(receiver, message), MediaType.APPLICATION_JSON));
 	}
 	
 	@Override
@@ -91,9 +100,4 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		context.term();
 	}
 	
-	@Override
-	public void sendACLMessage(AID receiver, ACLMessage message) {
-		
-	}
-
 }

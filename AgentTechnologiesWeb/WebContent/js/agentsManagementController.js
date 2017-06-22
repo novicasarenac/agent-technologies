@@ -183,7 +183,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 					   'inReplyTo': null,
 					   'replyBy': message.replyBy
 			   };
-			    if($scope.communicationType == 'REST')
+			   if($scope.communicationType == 'REST')
 				   sendMessageREST(aclMessage);
 			   else
 				   sendMessageWS(aclMessage);
