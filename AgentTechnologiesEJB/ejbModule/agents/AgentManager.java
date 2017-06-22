@@ -1,10 +1,11 @@
 package agents;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.naming.Context;
@@ -27,6 +28,7 @@ import server_management.AppManagementLocal;
 public class AgentManager implements AgentManagerLocal {
 	
 	private Map<String, AgentLocal> localAgents;
+	public static List<String> mapReduceFiles;
 	
 	@EJB
 	AgentsManagementLocal agentsManagement;
@@ -46,6 +48,10 @@ public class AgentManager implements AgentManagerLocal {
 	@PostConstruct
 	public void init() {
 		localAgents = new HashMap<>();
+		mapReduceFiles = new ArrayList<>();
+		mapReduceFiles.add("/map_reduce/file1.txt");
+		mapReduceFiles.add("/map_reduce/file2.txt");
+		mapReduceFiles.add("/map_reduce/file3.txt");
 	}
 
 	@Override
