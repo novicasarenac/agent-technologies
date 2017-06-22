@@ -1,2 +1,2 @@
 agents, Ping
-agents, MapReduce
+agents, MasterAgent
