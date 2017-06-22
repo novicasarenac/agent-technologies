@@ -33,5 +33,4 @@ public class MessageManagementListener implements MessageListener {
 		agentManager.deliverMessageToAgent(message.getTo(), message.getMessage());
 	}
 	
-	
 }

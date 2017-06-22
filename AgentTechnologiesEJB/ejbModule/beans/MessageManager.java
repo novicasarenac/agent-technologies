@@ -2,7 +2,10 @@ package beans;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSContext;
@@ -15,7 +18,7 @@ import model.AID;
 import server_management.AppManagementLocal;
 import utils.MessageToDeliver;
 
-@Singleton
+@Stateless
 public class MessageManager implements MessageManagerLocal {
 
 	@EJB

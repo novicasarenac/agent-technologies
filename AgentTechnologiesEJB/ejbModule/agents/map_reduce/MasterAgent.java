@@ -2,6 +2,7 @@ package agents.map_reduce;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.ejb.EJB;
@@ -53,6 +54,8 @@ public class MasterAgent extends Agent {
 				i++;
 				messageManager.sendACL(aclMessage);
 			}
+		} else if(message.getPerformative() == Performative.INFORM) {
+			System.out.println("STIGOO ODGOVOR");
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package beans;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.ejb.Stateless;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
