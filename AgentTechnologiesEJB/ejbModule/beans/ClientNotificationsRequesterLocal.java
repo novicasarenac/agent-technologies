@@ -2,6 +2,7 @@ package beans;
 
 import javax.ejb.Local;
 
+import model.ACLMessage;
 import model.AID;
 
 @Local
@@ -11,5 +12,6 @@ public interface ClientNotificationsRequesterLocal {
 	public void sendStopAgentNotification(AID aid);
 	public void sendShutdownNodeNotification();
 	public void sendAddNewNodeNotification();
+	public void sendMessageNotification(AID aid, ACLMessage message);
 	
 }

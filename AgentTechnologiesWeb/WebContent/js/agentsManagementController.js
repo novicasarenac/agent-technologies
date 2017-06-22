@@ -41,6 +41,11 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    			cleanSelected();
 				    		})
 				    		break;
+				    	case 'SEND_ACL_MESSAGE':
+				    		$scope.$apply(function() {
+				    			$scope.messages.push(message);
+				    		});
+				    		break;
 				   }
 			   }
 			   
@@ -58,6 +63,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   $scope.runningAgentsNames = [];
 		   $scope.selected = [];
 		   $scope.selectedType = {};
+		   $scope.messages = [];
 		   $scope.communicationType = 'REST';
 		   function initREST() {
 			   AgentsManagementFactory.getAgentTypes().success(function(data) {

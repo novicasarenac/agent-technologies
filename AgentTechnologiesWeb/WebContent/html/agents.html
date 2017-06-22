@@ -195,12 +195,13 @@
                     Messages
                 </div>
                 <div class="panel-body" style="max-height: 400px; overflow-y: scroll;">
-                    <div class="list-group">
-					  <a class="list-group-item">Ping</a>
-					  <a class="list-group-item">Pong</a>
-					  <a class="list-group-item">Pong</a>
-					  <a class="list-group-item">Pong</a>
-					</div>
+                    <ul class="list-group" ng-repeat="message in messages">
+					  <li class="list-group-item">
+					  	Receiver: {{message.aid.name}}</br>
+					  	Sender: {{message.aclMessage.sender.name}}</br>
+					  	Performative: {{message.aclMessage.performative}}
+					  </li>
+					</ul>
                 </div>
             </div>
         </div>

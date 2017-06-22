@@ -91,6 +91,11 @@ public class AgentsCommunicationController implements MessageListener {
 				response = new AgentsCommunicationMessage(null, null, null, aid, AgentsCommunicationMessageType.REMOVE_STOPPED_AGENT, true);
 				break;
 			}
+			case ACL_MESSAGE: {
+				clientNotificationRequester.sendMessageNotification(message.getAid(), message.getAclMessage());
+				response = new AgentsCommunicationMessage(null, null, null, null, AgentsCommunicationMessageType.ACL_MESSAGE, true);
+				break;
+			}
 		}
 		return response;
 	}

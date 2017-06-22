@@ -139,6 +139,19 @@ public class WSController implements MessageListener {
 				}
 				break;
 			}
+			case SEND_ACL_MESSAGE: {
+				String jsonObject;
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					jsonObject = mapper.writeValueAsString(message);
+					for(Session s : appManagement.getSessions()) {
+						s.getBasicRemote().sendText(jsonObject);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
 		}
 	}
 	

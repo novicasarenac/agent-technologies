@@ -105,6 +105,8 @@ public class AgentManager implements AgentManagerLocal {
 	@Override
 	public void deliverMessageToAgent(AID agent, ACLMessage message) {
 		localAgents.get(agent.getName()).handleMessage(message);
+		clientNotificationRequester.sendMessageNotification(agent, message);
+		sendNewMessageNotification(agent, message);
 	}
 
 	@Override
@@ -126,6 +128,15 @@ public class AgentManager implements AgentManagerLocal {
 		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
 			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
 				agentsRequester.sendStoppedAgentMessage(agentCenter, name);
+			}
+		}
+	}
+	
+	@Override
+	public void sendNewMessageNotification(AID aid, ACLMessage message) {
+		for(AgentCenter agentCenter : agentCentersManagement.getAgentCenters().values()) {
+			if(!agentCenter.getAlias().equals(appManagement.getLocalAlias())) {
+				agentsRequester.sendNewMessage(agentCenter, aid, message);
 			}
 		}
 	}

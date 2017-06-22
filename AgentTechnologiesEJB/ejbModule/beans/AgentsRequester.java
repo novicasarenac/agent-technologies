@@ -100,4 +100,29 @@ public class AgentsRequester implements AgentsRequesterLocal {
 		context.term();
 	}
 	
+	@Override
+	public void sendNewMessage(AgentCenter agentCenter, AID aid, ACLMessage aclMessage) {
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (agentCenter.getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 2;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		AgentsCommunicationMessage message = new AgentsCommunicationMessage(null, null, aclMessage, aid, AgentsCommunicationMessageType.ACL_MESSAGE, true);
+		String jsonObject = JSONConverter.convertAgentCommunicationMessageToJSON(message);
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		AgentsCommunicationMessage response;
+		if(reply != null)
+			response = JSONConverter.convertAgentCommunicationMessageFromJSON(reply);
+		else response = null;
+		
+		requester.close();
+		context.term();
+	}
+	
 }
