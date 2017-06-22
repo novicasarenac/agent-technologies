@@ -17,6 +17,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    		$scope.$apply(function() {
 				    			$scope.runningAgents.push(message.aid);
 				    			changeRunnigAgentsNames();
+				    			cleanSelected();
 				    		})
 				    		break;
 				    	case 'REMOVED_NODE':
@@ -24,6 +25,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    			$scope.runningAgents = message.runningAgents;
 				    			$scope.agentTypes = message.agentTypes;
 				    			changeRunnigAgentsNames();
+				    			cleanSelected();
 				    		})
 				    		break;
 				    	case 'ADDED_NEW_NODE':
@@ -36,6 +38,7 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 				    		$scope.$apply(function() {
 				    			$scope.runningAgents = temp;
 				    			changeRunnigAgentsNames();
+				    			cleanSelected();
 				    		})
 				    		break;
 				   }
@@ -79,6 +82,10 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 			   for(var i = 0; i < $scope.runningAgents.length; i++) {
 				  $scope.runningAgentsNames.push({'id': i+1, 'label': $scope.runningAgents[i].name});
 			   }
+		   }
+		   
+		   var cleanSelected = function() {
+			   $scope.selected = [];
 		   }
 		   
 		   $scope.runAgent = function(name) {
