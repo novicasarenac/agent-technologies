@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.zeromq.ZMQ;
 
 import agents.AgentManagerLocal;
+import beans.MessageManagerLocal;
 import exceptions.NameExistsException;
 import server_management.AppManagementLocal;
 import server_management.SystemPropertiesKeys;
@@ -37,6 +38,9 @@ public class WSController implements MessageListener {
 	
 	@EJB
 	AgentManagerLocal agentManager;
+	
+	@EJB
+	MessageManagerLocal messageManager;
 	
 	@EJB
 	AppManagementLocal appManagement;
@@ -72,6 +76,10 @@ public class WSController implements MessageListener {
 			}
 			case STOP_AGENT: {
 				agentManager.stopAgent(message.getName());
+				break;
+			}
+			case SEND_ACL_MESSAGE: {
+				messageManager.sendACL(message.getAclMessage());
 				break;
 			}
 		}

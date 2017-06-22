@@ -202,7 +202,20 @@ angular.module('agentsPlayground.AgentsManagementController', [])
 		   }
 		   
 		   var sendMessageWS = function(aclMessage) {
-			   
+			   var message = {
+					   'name' : null,
+					   'newAgentType' : null,
+					   'aid' : null,
+					   'agentTypes' : null,
+					   'aclMessage' : aclMessage,
+					   'messageType' : 'SEND_ACL_MESSAGE'
+			   }
+			   try {
+				   var messageJSON = angular.toJson(message);
+				   socket.send(messageJSON);
+			   } catch(exception) {
+				   console.log('Error!');
+			   }
 		   }
 		   
 		   $scope.selectType = function(type) {
