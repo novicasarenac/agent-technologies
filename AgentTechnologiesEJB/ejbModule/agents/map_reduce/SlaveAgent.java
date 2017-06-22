@@ -13,7 +13,7 @@ public class SlaveAgent extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage message) {
-		
+		System.out.println("Message received");
 	}
 
 }

@@ -147,4 +147,9 @@ public class AgentManager implements AgentManagerLocal {
 		}
 	}
 	
+	@Override
+	public Map<String, AID> getAllRunningAgents() {
+		return agentsManagement.getRunningAgents();
+	}
+	
 }
