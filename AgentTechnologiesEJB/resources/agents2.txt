@@ -1,2 +1,2 @@
 agents, Pong
-agents, ContractNet
+agents, Participant
