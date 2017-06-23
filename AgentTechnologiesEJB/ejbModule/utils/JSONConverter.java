@@ -72,4 +72,26 @@ public class JSONConverter {
 		return wsMessage;
 	}
 	
+	public static String convertMessageToDeliverToJSON(MessageToDeliver message) {
+		String jsonMessage = "";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			jsonMessage = mapper.writeValueAsString(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return jsonMessage;
+	}
+	
+	public static MessageToDeliver convertMessageToDeliverFromJSON(String message) {
+		MessageToDeliver wsMessage = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			wsMessage = mapper.readValue(message, MessageToDeliver.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return wsMessage;
+	}
+	
 }

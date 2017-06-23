@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -51,7 +53,6 @@ public class AgentManager implements AgentManagerLocal {
 		mapReduceFiles = new ArrayList<>();
 		mapReduceFiles.add("/map_reduce/file1.txt");
 		mapReduceFiles.add("/map_reduce/file2.txt");
-		mapReduceFiles.add("/map_reduce/file3.txt");
 	}
 
 	@Override

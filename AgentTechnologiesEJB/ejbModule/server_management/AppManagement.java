@@ -42,6 +42,7 @@ public class AppManagement implements AppManagementLocal {
 	private boolean heartbeatListenerStarted;
 	private boolean agentsCommunicationListenerStarted;
 	private boolean clientNotificationListenerStarted;
+	private boolean messageListenerStarted;
 	List<Session> clientSessions = new ArrayList<>();
 	
 	@EJB
@@ -70,6 +71,9 @@ public class AppManagement implements AppManagementLocal {
 	
 	@Resource(mappedName = "java:/jms/queue/notificationListener")
 	private Destination notificationListenerDestination;
+	
+	@Resource(mappedName = "java:/jms/queue/messageListener")
+	private Destination destinationMessageListener;
 	
 	@PostConstruct
 	public void initialize() {
@@ -102,6 +106,7 @@ public class AppManagement implements AppManagementLocal {
 		activateHeartbeatListener();
 		activateAgentsCommunicationListener();
 		activateClientNotificationListener();
+		activateMessageListener();
 		if(isMaster()) {
 			try {
 				agentCentersManagement.register(new AgentCenter(localAlias, local));
@@ -155,6 +160,12 @@ public class AppManagement implements AppManagementLocal {
 		String message = "Activation";
 		JMSProducer producer = context.createProducer();
 		producer.send(notificationListenerDestination, message);
+	}
+	
+	public void activateMessageListener() {
+		String message = "Activation";
+		JMSProducer producer = context.createProducer();
+		producer.send(destinationMessageListener, message);
 	}
 	
 	@Override
@@ -231,7 +242,17 @@ public class AppManagement implements AppManagementLocal {
 	public void setClientNotificationListenerStarted(boolean clientNotificationListenerStarted) {
 		this.clientNotificationListenerStarted = clientNotificationListenerStarted;
 	}
-	
+
+	@Override
+	public boolean isMessageListenerStarted() {
+		return messageListenerStarted;
+	}
+
+	@Override
+	public void setMessageListenerStarted(boolean messageListenerStarted) {
+		this.messageListenerStarted = messageListenerStarted;
+	}
+
 	@Override
 	public void addSession(Session session) {
 		if(!clientSessions.contains(session)) {

@@ -1,6 +1,7 @@
 package agents.map_reduce;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,6 +31,8 @@ public class MasterAgent extends Agent {
 
 	private String localName;
 	private List<String> slaves = new ArrayList<>();
+	private List<String> delivered = new ArrayList<>();
+	private Map<Character, Integer> result = new HashMap<>();
 	
 	@Override
 	public void handleMessage(ACLMessage message) {
@@ -55,7 +58,22 @@ public class MasterAgent extends Agent {
 				messageManager.sendACL(aclMessage);
 			}
 		} else if(message.getPerformative() == Performative.INFORM) {
-			System.out.println("STIGOO ODGOVOR");
+			Map<Character, Integer> slaveResult = (Map<Character, Integer>) message.getContentObj();
+			for(Character key : slaveResult.keySet()) {
+				if(result.containsKey(key)) {
+					Integer temp = result.get(key) + slaveResult.get(key);
+					result.put(key, temp);
+				} else {
+					result.put(key, slaveResult.get(key));
+				}
+			}
+			delivered.add(message.getSender().getName());
+			
+			if(slaves.size() == delivered.size()) {
+				System.out.println(result);
+				delivered.clear();
+				result.clear();
+			}
 		}
 	}
 	

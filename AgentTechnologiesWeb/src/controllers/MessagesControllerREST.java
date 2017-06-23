@@ -38,11 +38,4 @@ public class MessagesControllerREST {
 		
 		return retVal;		
 	}
-	
-	@POST
-	@Path("/sendToAgent")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void sendACLToAgent(MessageToDeliver messageToDeliver) {
-		messageManager.sendMessageToAgent(messageToDeliver.getTo(), messageToDeliver.getMessage());
-	}
 }

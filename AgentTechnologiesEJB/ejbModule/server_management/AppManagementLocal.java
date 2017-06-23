@@ -3,6 +3,7 @@ package server_management;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.jms.Destination;
 import javax.websocket.Session;
 
 @Local
@@ -24,5 +25,7 @@ public interface AppManagementLocal {
 	public void addSession(Session session);
 	public void removeSession(Session session);
 	public List<Session> getSessions();
+	public boolean isMessageListenerStarted();
+	public void setMessageListenerStarted(boolean messageListenerStarted);
 	
 }

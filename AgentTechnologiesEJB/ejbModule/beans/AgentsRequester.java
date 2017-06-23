@@ -1,7 +1,5 @@
 package beans;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ejb.Stateless;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -45,10 +43,22 @@ public class AgentsRequester implements AgentsRequesterLocal {
 	
 	@Override
 	public void sendACLMessage(AID receiver, ACLMessage message) {
-		ResteasyClient client = new ResteasyClientBuilder().build();
-		Response response = null;
-		ResteasyWebTarget target = client.target("http://" + receiver.getHost().getAddress() + "/AgentsPlayground/rest/messages/sendToAgent");
-		response = target.request().post(Entity.entity(new MessageToDeliver(receiver, message), MediaType.APPLICATION_JSON));
+		ZMQ.Context context = ZMQ.context(1);
+		
+		ZMQ.Socket requester = context.socket(ZMQ.REQ);
+		String centerPort =  (receiver.getHost().getAddress().split(":"))[1];
+		int port = SystemPropertiesKeys.MASTER_TCP_PORT + Integer.parseInt(centerPort) - SystemPropertiesKeys.MASTER_PORT + 4;
+		String url = "tcp://localhost:" + port;
+		System.out.println("SENDING TO: " + url);
+		requester.connect(url);
+		
+		String jsonObject = JSONConverter.convertMessageToDeliverToJSON(new MessageToDeliver(receiver, message));
+		requester.send(jsonObject, 0);
+		
+		String reply = requester.recvStr(0);
+		
+		requester.close();
+		context.term();
 	}
 	
 	@Override

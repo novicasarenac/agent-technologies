@@ -5,8 +5,11 @@ import java.util.Map;
 
 import javax.ejb.Local;
 
+import exceptions.NameExistsException;
+import model.ACLMessage;
 import model.AID;
 import model.AgentCenter;
+import model.AgentLocal;
 import model.AgentType;
 
 @Local
