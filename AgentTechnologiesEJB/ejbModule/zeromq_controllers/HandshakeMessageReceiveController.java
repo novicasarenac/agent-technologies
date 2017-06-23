@@ -182,6 +182,7 @@ public class HandshakeMessageReceiveController implements MessageListener {
 				agentCentersManagement.removeCenter(message.getNewAgentCenter());
 				agentsManagement.removeAgentTypes(message.getNewAgentCenter());
 				agentsManagement.removeRunningAgents(message.getNewAgentCenter());
+				clientNotificationsRequester.sendShutdownNodeNotification();
 				
 				retVal.setStatus(true);
 				break;

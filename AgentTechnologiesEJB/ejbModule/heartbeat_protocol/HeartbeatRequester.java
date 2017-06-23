@@ -11,6 +11,7 @@ import org.zeromq.ZMQ;
 
 import beans.AgentCentersManagementLocal;
 import beans.AgentsManagementLocal;
+import beans.ClientNotificationsRequesterLocal;
 import beans.ShutdownRequesterLocal;
 import model.AgentCenter;
 import server_management.AppManagementLocal;
@@ -30,6 +31,9 @@ public class HeartbeatRequester implements HeartbeatRequesterLocal {
 	
 	@EJB
 	AppManagementLocal appManagement;
+	
+	@EJB
+	ClientNotificationsRequesterLocal clientNotificationsRequester;
 
 	@Override
 	@Schedule(hour = "*", minute = "*", persistent = false)
@@ -91,6 +95,7 @@ public class HeartbeatRequester implements HeartbeatRequesterLocal {
 			agentCenterManagement.removeCenter(center);
 			boolean exists = agentsManagement.removeAgentTypes(center);
 			agentsManagement.removeRunningAgents(center);
+			clientNotificationsRequester.sendShutdownNodeNotification();
 			
 			if(exists) {
 				for(AgentCenter recipient : agentCenterManagement.getAgentCenters().values()) {
