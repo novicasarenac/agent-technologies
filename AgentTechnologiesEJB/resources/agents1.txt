@@ -1,4 +1,3 @@
 agents, Ping
 agents, MasterAgent
 agents, SlaveAgent
-agents, Initiator

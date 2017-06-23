@@ -1,2 +1,3 @@
 agents, Pong
 agents, Participant
+agents, Initiator
